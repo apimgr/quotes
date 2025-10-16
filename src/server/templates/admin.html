@@ -1,0 +1,32 @@
+{{define "content"}}
+<div class="admin-panel">
+    <h2>Admin Panel</h2>
+    <p>Manage your Quotes API settings</p>
+
+    <div class="card">
+        <h3>Authentication Required</h3>
+        <p>Use your admin token to access protected endpoints:</p>
+        <code>Authorization: Bearer YOUR_TOKEN_HERE</code>
+
+        <h4>Admin Endpoints</h4>
+        <div class="endpoint">
+            <code>GET /api/v1/admin/settings</code>
+            <p>Get all settings</p>
+        </div>
+        <div class="endpoint">
+            <code>POST /api/v1/admin/settings</code>
+            <p>Set or update a setting</p>
+        </div>
+        <div class="endpoint">
+            <code>DELETE /api/v1/admin/settings/{key}</code>
+            <p>Delete a setting</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Server Information</h3>
+        <p><strong>Version:</strong> {{.Version}}</p>
+        <p><strong>Status:</strong> <span class="status-active">Active</span></p>
+    </div>
+</div>
+{{end}}

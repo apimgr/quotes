@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//root/Projects/github/apimgr/**)",
+      "Bash(mkdir:*)",
+      "Bash(go mod:*)",
+      "Bash(tree:*)",
+      "Bash(go build:*)",
+      "Bash(gofmt:*)",
+      "Bash(go list:*)",
+      "Bash(python3:*)",
+      "Read(//tmp/**)",
+      "Bash(find:*)",
+      "Bash(/tmp/quotes-final-test:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

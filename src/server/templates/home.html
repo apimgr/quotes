@@ -1,0 +1,78 @@
+{{define "content"}}
+<div class="hero">
+    <h2>Welcome to Quotes API</h2>
+    <p>A simple and elegant API for inspirational quotes</p>
+</div>
+
+<div class="stats">
+    <div class="stat-card">
+        <h3>{{.Count}}</h3>
+        <p>Total Quotes</p>
+    </div>
+    <div class="stat-card">
+        <h3>REST API</h3>
+        <p>JSON Response</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3>API Endpoints</h3>
+    <div class="endpoint">
+        <code>GET /api/v1/random</code>
+        <p>Get a random quote</p>
+    </div>
+    <div class="endpoint">
+        <code>GET /api/v1/quotes</code>
+        <p>Get all quotes</p>
+    </div>
+    <div class="endpoint">
+        <code>GET /api/v1/quotes/{id}</code>
+        <p>Get a specific quote by ID</p>
+    </div>
+    <div class="endpoint">
+        <code>GET /api/v1/quotes/category/{category}</code>
+        <p>Get quotes by category</p>
+    </div>
+    <div class="endpoint">
+        <code>GET /api/v1/quotes/author/{author}</code>
+        <p>Get quotes by author</p>
+    </div>
+    <div class="endpoint">
+        <code>GET /api/v1/status</code>
+        <p>Get API status and version info</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Try It Now</h3>
+    <button onclick="getRandomQuote()" class="btn">Get Random Quote</button>
+    <div id="quote-display" class="quote-display"></div>
+</div>
+
+<script>
+async function getRandomQuote() {
+    const display = document.getElementById('quote-display');
+    display.innerHTML = '<p>Loading...</p>';
+
+    try {
+        const response = await fetch('/api/v1/random');
+        const data = await response.json();
+
+        if (data.success) {
+            const quote = data.data;
+            display.innerHTML = `
+                <blockquote>
+                    <p>"${quote.quote}"</p>
+                    <footer>— ${quote.author}</footer>
+                    <small>Category: ${quote.category}</small>
+                </blockquote>
+            `;
+        } else {
+            display.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+        }
+    } catch (error) {
+        display.innerHTML = `<p class="error">Error fetching quote: ${error.message}</p>`;
+    }
+}
+</script>
+{{end}}

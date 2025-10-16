@@ -1,0 +1,139 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  schedule:
+    - cron: '0 3 1 * *'  # Monthly on 1st at 3 AM UTC
+  workflow_dispatch:
+
+env:
+  GO_VERSION: '1.23'
+  PROJECTNAME: 'quotes'
+  PROJECTORG: 'apimgr'
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: make test
+
+  build-and-release:
+    name: Build and Release
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Read version
+        id: version
+        run: |
+          VERSION=$(cat release.txt)
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Building version: ${VERSION}"
+
+      - name: Build binaries
+        run: VERSION=${{ steps.version.outputs.VERSION }} make build
+
+      - name: List build artifacts
+        run: ls -lah releases/
+
+      - name: Delete existing release
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete ${{ steps.version.outputs.VERSION }} -y || true
+          git push origin :refs/tags/${{ steps.version.outputs.VERSION }} || true
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ steps.version.outputs.VERSION }} \
+            ./releases/* \
+            --title "${{ steps.version.outputs.VERSION }}" \
+            --notes "Release ${{ steps.version.outputs.VERSION }}
+
+          ## What's Changed
+          - Automated release build
+          - Multi-platform binaries (Linux, Windows, macOS, BSD)
+          - Both amd64 and arm64 architectures
+
+          ## Downloads
+          Download the appropriate binary for your platform:
+          - **Linux AMD64**: \`quotes-linux-amd64\`
+          - **Linux ARM64**: \`quotes-linux-arm64\`
+          - **Windows AMD64**: \`quotes-windows-amd64.exe\`
+          - **Windows ARM64**: \`quotes-windows-arm64.exe\`
+          - **macOS AMD64**: \`quotes-macos-amd64\`
+          - **macOS ARM64**: \`quotes-macos-arm64\`
+          - **BSD AMD64**: \`quotes-bsd-amd64\`
+          - **BSD ARM64**: \`quotes-bsd-arm64\`
+
+          ## Installation
+          \`\`\`bash
+          # Linux/macOS
+          chmod +x quotes-*
+          sudo mv quotes-* /usr/local/bin/quotes
+
+          # Run
+          quotes --port 8080
+          \`\`\`
+
+          ## Docker
+          \`\`\`bash
+          docker pull ghcr.io/${{ env.PROJECTORG }}/${{ env.PROJECTNAME }}:${{ steps.version.outputs.VERSION }}
+          \`\`\`
+
+          **Full Changelog**: https://github.com/${{ env.PROJECTORG }}/${{ env.PROJECTNAME }}/commits/${{ steps.version.outputs.VERSION }}"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries
+          path: releases/*
+          retention-days: 90

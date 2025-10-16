@@ -1,0 +1,44 @@
+# Development/Testing Docker Compose Configuration
+# Uses /tmp for ephemeral storage
+# External port: 64181:80
+
+services:
+  quotes:
+    image: quotes:dev
+    container_name: quotes-test
+    restart: "no"
+
+    environment:
+      - CONFIG_DIR=/config
+      - DATA_DIR=/data
+      - LOGS_DIR=/logs
+      - PORT=80
+      - ADDRESS=0.0.0.0
+      - DB_PATH=/data/db/quotes.db
+      - ADMIN_USER=administrator
+      - ADMIN_PASSWORD=testpass123
+      - DEV=true
+
+    volumes:
+      - /tmp/quotes/rootfs/config/quotes:/config
+      - /tmp/quotes/rootfs/data/quotes:/data
+      - /tmp/quotes/rootfs/logs/quotes:/logs
+
+    ports:
+      - "64181:80"
+
+    networks:
+      - quotes
+
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/quotes", "--status"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+networks:
+  quotes:
+    name: quotes
+    external: false
+    driver: bridge
