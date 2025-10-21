@@ -12,7 +12,7 @@ import (
 	"github.com/apimgr/quotes/src/dadjokes"
 	"github.com/apimgr/quotes/src/programming"
 	"github.com/apimgr/quotes/src/quotes"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 )
 
 // APIResponse represents a standard API response
@@ -48,8 +48,8 @@ func handleAllQuotes(w http.ResponseWriter, r *http.Request) {
 
 // handleQuoteByID returns a quote by ID
 func handleQuoteByID(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+	// Using Chi URLParam instead of mux.Vars
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid quote ID")
 		return
@@ -69,8 +69,8 @@ func handleQuoteByID(w http.ResponseWriter, r *http.Request) {
 
 // handleQuotesByCategory returns quotes by category
 func handleQuotesByCategory(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	category := vars["category"]
+	// Using Chi URLParam instead of mux.Vars
+	category := chi.URLParam(r, "category")
 
 	categoryQuotes := quotes.GetQuotesByCategory(category)
 	if len(categoryQuotes) == 0 {
@@ -86,8 +86,8 @@ func handleQuotesByCategory(w http.ResponseWriter, r *http.Request) {
 
 // handleQuotesByAuthor returns quotes by author
 func handleQuotesByAuthor(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	author := vars["author"]
+	// Using Chi URLParam instead of mux.Vars
+	author := chi.URLParam(r, "author")
 
 	authorQuotes := quotes.GetQuotesByAuthor(author)
 	if len(authorQuotes) == 0 {
@@ -140,8 +140,8 @@ func handleAdminPage(w http.ResponseWriter, r *http.Request) {
 
 // handleJSONFile serves raw JSON files
 func handleJSONFile(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	filename := vars["file"]
+	// Using Chi URLParam instead of mux.Vars
+	filename := chi.URLParam(r, "file")
 
 	// Read the JSON file
 	data, err := os.ReadFile("./src/data/" + filename)
@@ -199,8 +199,8 @@ func handleAllAnimeQuotes(w http.ResponseWriter, r *http.Request) {
 
 // handleAnimeQuoteByID returns an anime quote by ID
 func handleAnimeQuoteByID(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+	// Using Chi URLParam instead of mux.Vars
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid quote ID")
 		return
@@ -220,8 +220,8 @@ func handleAnimeQuoteByID(w http.ResponseWriter, r *http.Request) {
 
 // handleAnimeQuotesByCategory returns anime quotes by category
 func handleAnimeQuotesByCategory(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	category := vars["category"]
+	// Using Chi URLParam instead of mux.Vars
+	category := chi.URLParam(r, "category")
 
 	categoryQuotes := anime.GetQuotesByCategory(category)
 	if len(categoryQuotes) == 0 {
@@ -237,8 +237,8 @@ func handleAnimeQuotesByCategory(w http.ResponseWriter, r *http.Request) {
 
 // handleAnimeQuotesByAnime returns quotes from a specific anime
 func handleAnimeQuotesByAnime(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	animeName := vars["anime"]
+	// Using Chi URLParam instead of mux.Vars
+	animeName := chi.URLParam(r, "anime")
 
 	animeQuotes := anime.GetQuotesByAnime(animeName)
 	if len(animeQuotes) == 0 {
@@ -254,8 +254,8 @@ func handleAnimeQuotesByAnime(w http.ResponseWriter, r *http.Request) {
 
 // handleAnimeQuotesByCharacter returns quotes by a specific character
 func handleAnimeQuotesByCharacter(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	character := vars["character"]
+	// Using Chi URLParam instead of mux.Vars
+	character := chi.URLParam(r, "character")
 
 	characterQuotes := anime.GetQuotesByCharacter(character)
 	if len(characterQuotes) == 0 {

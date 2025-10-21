@@ -31,26 +31,26 @@ PLATFORMS := \
 # Default target
 all: build
 
-# Build for current platform
+# Build for all platforms using Docker (SPEC compliant)
 build:
 	@echo "Building $(PROJECTNAME) v$(VERSION) for all platforms..."
 	@mkdir -p $(BINDIR) $(RELEASEDIR)
-	@$(foreach platform,$(PLATFORMS), \
-		GOOS=$(word 1,$(subst /, ,$(platform))) \
-		GOARCH=$(word 2,$(subst /, ,$(platform))) \
-		CGO_ENABLED=0 go build $(BUILD_FLAGS) \
-		-o $(BINDIR)/$(PROJECTNAME)-$(word 1,$(subst /, ,$(platform)))-$(word 2,$(subst /, ,$(platform)))$(if $(findstring windows,$(platform)),.exe,) \
-		./src && \
-		echo "✓ Built $(PROJECTNAME)-$(word 1,$(subst /, ,$(platform)))-$(word 2,$(subst /, ,$(platform)))$(if $(findstring windows,$(platform)),.exe,)" ; \
-	)
-	@# Copy current platform binary to project root
-	@cp $(BINDIR)/$(PROJECTNAME)-$(shell go env GOOS)-$(shell go env GOARCH)$(if $(findstring windows,$(shell go env GOOS)),.exe,) $(BINDIR)/$(PROJECTNAME)$(if $(findstring windows,$(shell go env GOOS)),.exe,)
+	@docker run --rm -v $$(pwd):/workspace -w /workspace golang:alpine sh -c ' \
+		apk add --no-cache git make && \
+		CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(BUILD_FLAGS) -o binaries/$(PROJECTNAME)-linux-amd64 ./src && \
+		CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build $(BUILD_FLAGS) -o binaries/$(PROJECTNAME)-linux-arm64 ./src && \
+		CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build $(BUILD_FLAGS) -o binaries/$(PROJECTNAME)-macos-amd64 ./src && \
+		CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build $(BUILD_FLAGS) -o binaries/$(PROJECTNAME)-macos-arm64 ./src && \
+		CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build $(BUILD_FLAGS) -o binaries/$(PROJECTNAME)-windows-amd64.exe ./src && \
+		CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build $(BUILD_FLAGS) -o binaries/$(PROJECTNAME)-windows-arm64.exe ./src && \
+		CGO_ENABLED=0 GOOS=freebsd GOARCH=amd64 go build $(BUILD_FLAGS) -o binaries/$(PROJECTNAME)-bsd-amd64 ./src && \
+		CGO_ENABLED=0 GOOS=freebsd GOARCH=arm64 go build $(BUILD_FLAGS) -o binaries/$(PROJECTNAME)-bsd-arm64 ./src'
 	@echo "✓ Build complete: $(PROJECTNAME) v$(VERSION)"
 
-# Run tests
+# Run tests in Docker (SPEC compliant)
 test:
 	@echo "Running tests..."
-	@go test -v ./src/...
+	@docker run --rm -v $$(pwd):/workspace -w /workspace golang:alpine sh -c 'go test -v -race -timeout 5m ./src/...'
 	@echo "✓ Tests passed"
 
 # Clean build artifacts

@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/apimgr/quotes/src/database"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 )
 
 // handleGetSettings returns all settings
@@ -52,8 +52,7 @@ func handleSetSetting(w http.ResponseWriter, r *http.Request) {
 
 // handleDeleteSetting deletes a setting
 func handleDeleteSetting(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	key := vars["key"]
+	key := chi.URLParam(r, "key")
 
 	if err := database.DeleteSetting(key); err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Failed to delete setting")

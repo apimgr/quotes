@@ -161,8 +161,8 @@ func main() {
 	server.BuildDate = BuildDate
 
 	// Start server
-	srv := server.NewServer(*port)
-	if err := srv.Start(*address); err != nil {
+	srv := server.NewServer(*port, *address)
+	if err := srv.Start(); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
 }
