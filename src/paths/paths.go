@@ -2,100 +2,144 @@ package paths
 
 import (
 	"os"
+	"os/user"
 	"path/filepath"
 	"runtime"
 )
 
-// GetConfigDir returns the configuration directory for the application
-func GetConfigDir() string {
-	// Check environment variable first
-	if dir := os.Getenv("CONFIG_DIR"); dir != "" {
-		return dir
-	}
+const (
+	// OrgName is the organization name for directory structure
+	OrgName = "apimgr"
+	// ProjectName is the project name
+	ProjectName = "quotes"
+)
 
-	switch runtime.GOOS {
-	case "windows":
-		if appData := os.Getenv("APPDATA"); appData != "" {
-			return filepath.Join(appData, "quotes")
-		}
-		return filepath.Join(os.Getenv("USERPROFILE"), ".config", "quotes")
-	case "darwin":
-		if home := os.Getenv("HOME"); home != "" {
-			return filepath.Join(home, "Library", "Application Support", "quotes")
-		}
-		return "/usr/local/etc/quotes"
-	default: // Linux and other Unix-like systems
-		if xdgConfig := os.Getenv("XDG_CONFIG_HOME"); xdgConfig != "" {
-			return filepath.Join(xdgConfig, "quotes")
-		}
-		if home := os.Getenv("HOME"); home != "" {
-			return filepath.Join(home, ".config", "quotes")
-		}
-		return "/etc/quotes"
+// Directories holds the application directories
+type Directories struct {
+	Config string
+	Data   string
+	Logs   string
+}
+
+// GetDirectories returns OS-specific directories
+func GetDirectories() Directories {
+	configDir, dataDir, logsDir := GetDefaultDirs(ProjectName)
+	return Directories{
+		Config: configDir,
+		Data:   dataDir,
+		Logs:   logsDir,
 	}
 }
 
-// GetDataDir returns the data directory for the application
-func GetDataDir() string {
-	// Check environment variable first
-	if dir := os.Getenv("DATA_DIR"); dir != "" {
-		return dir
+// GetDefaultDirs returns OS-specific default directories based on privileges
+func GetDefaultDirs(projectName string) (configDir, dataDir, logsDir string) {
+	// Check if running in container
+	if IsRunningInContainer() {
+		return "/config", "/data", "/logs"
 	}
 
-	switch runtime.GOOS {
-	case "windows":
-		if appData := os.Getenv("LOCALAPPDATA"); appData != "" {
-			return filepath.Join(appData, "quotes")
-		}
-		return filepath.Join(os.Getenv("USERPROFILE"), ".local", "share", "quotes")
-	case "darwin":
-		if home := os.Getenv("HOME"); home != "" {
-			return filepath.Join(home, "Library", "Application Support", "quotes")
-		}
-		return "/usr/local/var/quotes"
-	default: // Linux and other Unix-like systems
-		if xdgData := os.Getenv("XDG_DATA_HOME"); xdgData != "" {
-			return filepath.Join(xdgData, "quotes")
-		}
-		if home := os.Getenv("HOME"); home != "" {
-			return filepath.Join(home, ".local", "share", "quotes")
-		}
-		return "/var/lib/quotes"
+	// Check if running as root/admin
+	isRoot := false
+	if runtime.GOOS == "windows" {
+		isRoot = os.Getenv("USERDOMAIN") == os.Getenv("COMPUTERNAME")
+	} else {
+		isRoot = os.Geteuid() == 0
 	}
+
+	if isRoot {
+		switch runtime.GOOS {
+		case "windows":
+			programData := os.Getenv("ProgramData")
+			if programData == "" {
+				programData = "C:\\ProgramData"
+			}
+			configDir = filepath.Join(programData, OrgName, projectName)
+			dataDir = filepath.Join(programData, OrgName, projectName, "data")
+			logsDir = filepath.Join(programData, OrgName, projectName, "logs")
+		default: // Linux, BSD, macOS
+			configDir = filepath.Join("/etc", OrgName, projectName)
+			dataDir = filepath.Join("/var/lib", OrgName, projectName)
+			logsDir = filepath.Join("/var/log", OrgName, projectName)
+		}
+	} else {
+		var homeDir string
+		currentUser, err := user.Current()
+		if err == nil {
+			homeDir = currentUser.HomeDir
+		} else {
+			homeDir = os.Getenv("HOME")
+			if homeDir == "" {
+				homeDir = os.Getenv("USERPROFILE")
+			}
+		}
+
+		switch runtime.GOOS {
+		case "windows":
+			appData := os.Getenv("APPDATA")
+			if appData == "" {
+				appData = filepath.Join(homeDir, "AppData", "Roaming")
+			}
+			localAppData := os.Getenv("LOCALAPPDATA")
+			if localAppData == "" {
+				localAppData = filepath.Join(homeDir, "AppData", "Local")
+			}
+			configDir = filepath.Join(appData, OrgName, projectName)
+			dataDir = filepath.Join(localAppData, OrgName, projectName)
+			logsDir = filepath.Join(localAppData, OrgName, projectName, "logs")
+		case "darwin":
+			configDir = filepath.Join(homeDir, ".config", OrgName, projectName)
+			dataDir = filepath.Join(homeDir, ".local", "share", OrgName, projectName)
+			logsDir = filepath.Join(homeDir, ".local", "share", OrgName, projectName, "logs")
+		default: // Linux, BSD
+			xdgConfig := os.Getenv("XDG_CONFIG_HOME")
+			if xdgConfig == "" {
+				xdgConfig = filepath.Join(homeDir, ".config")
+			}
+			xdgData := os.Getenv("XDG_DATA_HOME")
+			if xdgData == "" {
+				xdgData = filepath.Join(homeDir, ".local", "share")
+			}
+
+			configDir = filepath.Join(xdgConfig, OrgName, projectName)
+			dataDir = filepath.Join(xdgData, OrgName, projectName)
+			logsDir = filepath.Join(xdgData, OrgName, projectName, "logs")
+		}
+	}
+
+	return configDir, dataDir, logsDir
 }
 
-// GetLogsDir returns the logs directory for the application
-func GetLogsDir() string {
-	// Check environment variable first
-	if dir := os.Getenv("LOGS_DIR"); dir != "" {
-		return dir
-	}
-
-	switch runtime.GOOS {
-	case "windows":
-		return filepath.Join(GetDataDir(), "logs")
-	case "darwin":
-		if home := os.Getenv("HOME"); home != "" {
-			return filepath.Join(home, "Library", "Logs", "quotes")
+// EnsureDirectories creates all required directories
+func EnsureDirectories(dirs Directories) error {
+	for _, dir := range []string{dirs.Config, dirs.Data, dirs.Logs} {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return err
 		}
-		return "/usr/local/var/log/quotes"
-	default: // Linux and other Unix-like systems
-		return "/var/log/quotes"
 	}
-}
-
-// GetDBPath returns the database file path
-func GetDBPath() string {
-	// Check environment variable first
-	if dbPath := os.Getenv("DB_PATH"); dbPath != "" {
-		return dbPath
-	}
-
-	dataDir := GetDataDir()
-	return filepath.Join(dataDir, "db", "quotes.db")
+	return nil
 }
 
 // EnsureDir creates a directory if it doesn't exist
 func EnsureDir(path string) error {
 	return os.MkdirAll(path, 0755)
+}
+
+// IsRunningInContainer checks if running inside a container
+func IsRunningInContainer() bool {
+	// Check for Docker
+	if _, err := os.Stat("/.dockerenv"); err == nil {
+		return true
+	}
+	// Check for common container init systems
+	data, err := os.ReadFile("/proc/1/comm")
+	if err != nil {
+		return false
+	}
+	comm := string(data)
+	return comm == "tini\n" || comm == "tini" || comm == "dumb-init\n"
+}
+
+// GetBackupDir returns the default backup directory
+func GetBackupDir() string {
+	return filepath.Join("/mnt/Backups", OrgName, ProjectName)
 }

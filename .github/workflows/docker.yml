@@ -1,39 +1,27 @@
-name: Docker Build and Push
+name: Docker Build
 
 on:
   push:
-    branches:
-      - main
-      - master
-  schedule:
-    - cron: '0 3 1 * *'  # Monthly on 1st at 3 AM UTC
+    branches: ['**']  # ALL branches
+    tags:
+      - 'v*'
+      - '*.*.*'
   workflow_dispatch:
 
 env:
+  PROJECT: quotes
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push:
-    name: Build and Push Docker Image
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Read version
-        id: version
-        run: |
-          VERSION=$(cat release.txt)
-          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
-          COMMIT=$(git rev-parse --short HEAD)
-          echo "COMMIT=${COMMIT}" >> $GITHUB_OUTPUT
-          BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          echo "BUILD_DATE=${BUILD_DATE}" >> $GITHUB_OUTPUT
-          echo "Building version: ${VERSION}"
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -41,47 +29,65 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to Container Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=latest
-            type=raw,value=${{ steps.version.outputs.VERSION }}
-            type=sha,prefix={{branch}}-
+      - name: Set build info
+        run: |
+          echo "GIT_COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "YYMM=$(date +"%y%m")" >> $GITHUB_ENV
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/}"
+            echo "VERSION=${VERSION#v}" >> $GITHUB_ENV  # Strip 'v' prefix
+            echo "IS_TAG=true" >> $GITHUB_ENV
+          else
+            echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+            echo "IS_TAG=false" >> $GITHUB_ENV
+          fi
+          echo "BUILD_DATE=$(date +"%a %b %d, %Y at %H:%M:%S %Z")" >> $GITHUB_ENV
+          echo "COMMIT_ID=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Build and push Docker image
+      - name: Determine tags
+        id: tags
+        run: |
+          TAGS="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.GIT_COMMIT }}"
+
+          if [[ "${{ env.IS_TAG }}" == "true" ]]; then
+            # Release tag - version, latest, YYMM
+            TAGS="$TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}"
+            TAGS="$TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+            TAGS="$TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.YYMM }}"
+          else
+            # All pushes get devel tag
+            TAGS="$TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:devel"
+
+            # Beta branch also gets beta tag
+            if [[ "${{ github.ref }}" == refs/heads/beta ]]; then
+              TAGS="$TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:beta"
+            fi
+          fi
+
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+
+      - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.tags.outputs.tags }}
           build-args: |
-            VERSION=${{ steps.version.outputs.VERSION }}
-            COMMIT=${{ steps.version.outputs.COMMIT }}
-            BUILD_DATE=${{ steps.version.outputs.BUILD_DATE }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Verify images
-        run: |
-          echo "Images pushed:"
-          echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n'
-
-          echo ""
-          echo "Pull command:"
-          echo "docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
-          echo "docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}"
-
-      - name: Image digest
-        run: echo ${{ steps.build.outputs.digest }}
+            VERSION="${{ env.VERSION }}"
+            BUILD_DATE="${{ env.BUILD_DATE }}"
+            COMMIT_ID="${{ env.COMMIT_ID }}"
+          labels: |
+            org.opencontainers.image.title="${{ env.PROJECT }}"
+            org.opencontainers.image.version="${{ env.VERSION }}"
+            org.opencontainers.image.created="${{ env.BUILD_DATE }}"
+            org.opencontainers.image.revision="${{ env.COMMIT_ID }}"
+            org.opencontainers.image.source="${{ github.server_url }}/${{ github.repository }}"
