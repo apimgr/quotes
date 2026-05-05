@@ -1,5 +1,5 @@
 # Production Docker Compose Configuration
-# Uses ./rootfs for persistent storage
+# Uses ./volumes for persistent storage
 # External port: 172.17.0.1:64180:80 (Docker bridge network)
 
 services:
@@ -21,9 +21,9 @@ services:
       #- ADMIN_TOKEN=your-token-here
 
     volumes:
-      - ./rootfs/config/quotes:/config
-      - ./rootfs/data/quotes:/data
-      - ./rootfs/logs/quotes:/logs
+      - ./volumes/config/quotes:/config
+      - ./volumes/data/quotes:/data
+      - ./volumes/logs/quotes:/logs
 
     ports:
       - "172.17.0.1:64180:80"

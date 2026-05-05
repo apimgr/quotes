@@ -20,9 +20,9 @@ services:
       - DEV=true
 
     volumes:
-      - /tmp/quotes/rootfs/config/quotes:/config
-      - /tmp/quotes/rootfs/data/quotes:/data
-      - /tmp/quotes/rootfs/logs/quotes:/logs
+      - /tmp/quotes/volumes/config/quotes:/config
+      - /tmp/quotes/volumes/data/quotes:/data
+      - /tmp/quotes/volumes/logs/quotes:/logs
 
     ports:
       - "64181:80"
