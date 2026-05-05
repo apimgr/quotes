@@ -171,7 +171,7 @@ Edit `src/data/quotes.json` and add your quote:
 ### Production
 
 Port: `172.17.0.1:64180:80`
-Storage: `./rootfs/`
+Storage: `./volumes/`
 
 ```bash
 docker-compose up -d
@@ -180,7 +180,7 @@ docker-compose up -d
 ### Development
 
 Port: `64181:80`
-Storage: `/tmp/quotes/rootfs/`
+Storage: `/tmp/quotes/volumes/`
 
 ```bash
 docker-compose -f docker-compose.test.yml up -d
