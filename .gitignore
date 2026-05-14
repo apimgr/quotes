@@ -5,7 +5,6 @@ releases/
 *.dll
 *.so
 *.dylib
-quotes
 
 # Test binary
 *.test
@@ -30,8 +29,8 @@ go.work
 .DS_Store
 Thumbs.db
 
-# Application
-rootfs/
+# Runtime volumes (docker compose, never committed)
+volumes/
 *.db
 *.log
 
