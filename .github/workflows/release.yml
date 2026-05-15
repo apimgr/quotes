@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  GO_VERSION: '1.23'
+  GO_VERSION: 'stable'
   PROJECTNAME: 'quotes'
   PROJECTORG: 'apimgr'
 
@@ -79,7 +79,7 @@ jobs:
         run: VERSION=${{ steps.version.outputs.VERSION }} make build
 
       - name: List build artifacts
-        run: ls -lah releases/
+        run: ls -lah binaries/
 
       - name: Delete existing release
         continue-on-error: true
@@ -94,7 +94,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create ${{ steps.version.outputs.VERSION }} \
-            ./releases/* \
+            ./binaries/* \
             --title "${{ steps.version.outputs.VERSION }}" \
             --notes "Release ${{ steps.version.outputs.VERSION }}
 
@@ -135,5 +135,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: binaries
-          path: releases/*
+          path: binaries/*
           retention-days: 90
