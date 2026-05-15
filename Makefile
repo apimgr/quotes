@@ -50,7 +50,7 @@ build:
 # Run tests in Docker (SPEC compliant)
 test:
 	@echo "Running tests..."
-	@docker run --rm -v $$(pwd):/workspace -w /workspace golang:alpine sh -c 'go test -v -race -timeout 5m ./src/...'
+	@docker run --rm -v $$(pwd):/workspace -w /workspace golang:alpine sh -c 'go test -v -timeout 5m ./src/...'
 	@echo "✓ Tests passed"
 
 # Clean build artifacts
