@@ -9,7 +9,7 @@ BUILD_DATE := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 
 # Build variables
 LDFLAGS := -X main.Version=$(VERSION) -X main.Commit=$(COMMIT) -X main.BuildDate=$(BUILD_DATE) -w -s
-BUILD_FLAGS := -ldflags "$(LDFLAGS)" -a -installsuffix cgo
+BUILD_FLAGS := -ldflags "$(LDFLAGS)" -buildvcs=false -a -installsuffix cgo
 
 # Output directories
 BINDIR := binaries
