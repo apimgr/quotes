@@ -1,0 +1,25 @@
+name: quotes
+
+services:
+  quotes:
+    image: ghcr.io/apimgr/quotes:latest
+    container_name: quotes
+    restart: unless-stopped
+    environment:
+      # Hardcoded with sane defaults - NO .env files
+      - MODE=production
+      - TZ=America/New_York
+      # ENABLE_TOR=true is default, no need to specify
+    ports:
+      # Production: bound to Docker bridge only
+      - "172.17.0.1:64580:80"
+    volumes:
+      - ./rootfs/config/quotes:/config
+      - ./rootfs/data/quotes:/data
+    networks:
+      - quotes
+
+networks:
+  quotes:
+    name: quotes
+    external: false

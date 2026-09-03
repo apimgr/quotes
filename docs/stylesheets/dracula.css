@@ -1,0 +1,329 @@
+/**
+ * Dracula Theme for MkDocs Material
+ * Based on Dracula color scheme
+ * https://draculatheme.com
+ */
+
+:root {
+  /* Dracula Color Palette */
+  --dracula-background: #282a36;
+  --dracula-current-line: #44475a;
+  --dracula-selection: #44475a;
+  --dracula-foreground: #f8f8f2;
+  --dracula-comment: #6272a4;
+  --dracula-cyan: #8be9fd;
+  --dracula-green: #50fa7b;
+  --dracula-orange: #ffb86c;
+  --dracula-pink: #ff79c6;
+  --dracula-purple: #bd93f9;
+  --dracula-red: #ff5555;
+  --dracula-yellow: #f1fa8c;
+}
+
+/* Override Material theme colors */
+[data-md-color-scheme="dracula"] {
+  /* Background colors */
+  --md-default-bg-color: var(--dracula-background);
+  --md-default-fg-color: var(--dracula-foreground);
+  --md-code-bg-color: var(--dracula-current-line);
+  --md-code-fg-color: var(--dracula-foreground);
+
+  /* Primary color (purple) */
+  --md-primary-fg-color: var(--dracula-purple);
+  --md-primary-fg-color--light: var(--dracula-purple);
+  --md-primary-fg-color--dark: var(--dracula-purple);
+  --md-primary-bg-color: var(--dracula-foreground);
+  --md-primary-bg-color--light: var(--dracula-current-line);
+
+  /* Accent color (pink) */
+  --md-accent-fg-color: var(--dracula-pink);
+  --md-accent-fg-color--transparent: rgba(255, 121, 198, 0.1);
+  --md-accent-bg-color: var(--dracula-foreground);
+  --md-accent-bg-color--light: var(--dracula-current-line);
+
+  /* Text colors */
+  --md-typeset-color: var(--dracula-foreground);
+  --md-typeset-a-color: var(--dracula-cyan);
+  --md-typeset-mark-color: var(--dracula-yellow);
+  --md-typeset-del-color: var(--dracula-red);
+  --md-typeset-ins-color: var(--dracula-green);
+  --md-typeset-kbd-color: var(--dracula-current-line);
+  --md-typeset-kbd-accent-color: var(--dracula-foreground);
+  --md-typeset-kbd-border-color: var(--dracula-comment);
+
+  /* Admonition colors */
+  --md-admonition-bg-color: var(--dracula-current-line);
+  --md-admonition-fg-color: var(--dracula-foreground);
+
+  /* Footer */
+  --md-footer-bg-color: var(--dracula-current-line);
+  --md-footer-bg-color--dark: var(--dracula-background);
+  --md-footer-fg-color: var(--dracula-foreground);
+
+  /* Shadow */
+  --md-shadow-z1: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.3);
+  --md-shadow-z2: 0 0.2rem 1rem rgba(0, 0, 0, 0.4);
+  --md-shadow-z3: 0 0.2rem 2rem rgba(0, 0, 0, 0.5);
+}
+
+/* Code blocks */
+.highlight {
+  background-color: var(--dracula-current-line) !important;
+}
+
+.highlight .c { color: var(--dracula-comment); } /* Comment */
+.highlight .k { color: var(--dracula-pink); } /* Keyword */
+.highlight .o { color: var(--dracula-pink); } /* Operator */
+.highlight .s { color: var(--dracula-yellow); } /* String */
+.highlight .n { color: var(--dracula-foreground); } /* Name */
+.highlight .na { color: var(--dracula-green); } /* Name.Attribute */
+.highlight .nb { color: var(--dracula-cyan); } /* Name.Builtin */
+.highlight .nc { color: var(--dracula-cyan); } /* Name.Class */
+.highlight .no { color: var(--dracula-purple); } /* Name.Constant */
+.highlight .nd { color: var(--dracula-green); } /* Name.Decorator */
+.highlight .ni { color: var(--dracula-green); } /* Name.Entity */
+.highlight .ne { color: var(--dracula-cyan); } /* Name.Exception */
+.highlight .nf { color: var(--dracula-green); } /* Name.Function */
+.highlight .nl { color: var(--dracula-cyan); } /* Name.Label */
+.highlight .nn { color: var(--dracula-foreground); } /* Name.Namespace */
+.highlight .nt { color: var(--dracula-pink); } /* Name.Tag */
+.highlight .nv { color: var(--dracula-foreground); } /* Name.Variable */
+.highlight .m { color: var(--dracula-purple); } /* Number */
+.highlight .mb { color: var(--dracula-purple); } /* Number.Bin */
+.highlight .mf { color: var(--dracula-purple); } /* Number.Float */
+.highlight .mh { color: var(--dracula-purple); } /* Number.Hex */
+.highlight .mi { color: var(--dracula-purple); } /* Number.Integer */
+.highlight .mo { color: var(--dracula-purple); } /* Number.Oct */
+.highlight .kc { color: var(--dracula-purple); } /* Keyword.Constant */
+.highlight .kd { color: var(--dracula-cyan); } /* Keyword.Declaration */
+.highlight .kn { color: var(--dracula-pink); } /* Keyword.Namespace */
+.highlight .kp { color: var(--dracula-pink); } /* Keyword.Pseudo */
+.highlight .kr { color: var(--dracula-pink); } /* Keyword.Reserved */
+.highlight .kt { color: var(--dracula-cyan); } /* Keyword.Type */
+
+/* Inline code */
+code {
+  background-color: var(--dracula-current-line);
+  color: var(--dracula-pink);
+  padding: 0.1em 0.3em;
+  border-radius: 0.2em;
+}
+
+/* Tables */
+.md-typeset table:not([class]) {
+  border: 1px solid var(--dracula-comment);
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--dracula-current-line);
+  color: var(--dracula-cyan);
+  border-bottom: 2px solid var(--dracula-comment);
+}
+
+.md-typeset table:not([class]) td {
+  border-top: 1px solid var(--dracula-comment);
+}
+
+.md-typeset table:not([class]) tr:hover {
+  background-color: var(--dracula-selection);
+}
+
+/* Admonitions */
+.md-typeset .admonition {
+  border-left: 0.2rem solid var(--dracula-cyan);
+  background-color: var(--dracula-current-line);
+}
+
+.md-typeset .admonition.note {
+  border-left-color: var(--dracula-cyan);
+}
+
+.md-typeset .admonition.abstract,
+.md-typeset .admonition.info,
+.md-typeset .admonition.tip {
+  border-left-color: var(--dracula-green);
+}
+
+.md-typeset .admonition.success,
+.md-typeset .admonition.check,
+.md-typeset .admonition.done {
+  border-left-color: var(--dracula-green);
+}
+
+.md-typeset .admonition.question,
+.md-typeset .admonition.help,
+.md-typeset .admonition.faq {
+  border-left-color: var(--dracula-purple);
+}
+
+.md-typeset .admonition.warning,
+.md-typeset .admonition.caution,
+.md-typeset .admonition.attention {
+  border-left-color: var(--dracula-orange);
+}
+
+.md-typeset .admonition.failure,
+.md-typeset .admonition.fail,
+.md-typeset .admonition.missing {
+  border-left-color: var(--dracula-red);
+}
+
+.md-typeset .admonition.danger,
+.md-typeset .admonition.error {
+  border-left-color: var(--dracula-red);
+}
+
+.md-typeset .admonition.bug {
+  border-left-color: var(--dracula-pink);
+}
+
+.md-typeset .admonition.example {
+  border-left-color: var(--dracula-purple);
+}
+
+.md-typeset .admonition.quote,
+.md-typeset .admonition.cite {
+  border-left-color: var(--dracula-comment);
+}
+
+/* Headers */
+.md-typeset h1 {
+  color: var(--dracula-purple);
+}
+
+.md-typeset h2 {
+  color: var(--dracula-cyan);
+}
+
+.md-typeset h3 {
+  color: var(--dracula-green);
+}
+
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+  color: var(--dracula-pink);
+}
+
+/* Links */
+.md-typeset a {
+  color: var(--dracula-cyan);
+}
+
+.md-typeset a:hover {
+  color: var(--dracula-purple);
+}
+
+/* Navigation */
+.md-nav__link--active {
+  color: var(--dracula-pink);
+}
+
+.md-nav__link:hover {
+  color: var(--dracula-cyan);
+}
+
+/* Search */
+.md-search__input {
+  background-color: var(--dracula-current-line);
+  color: var(--dracula-foreground);
+  border: 1px solid var(--dracula-comment);
+}
+
+.md-search__input::placeholder {
+  color: var(--dracula-comment);
+}
+
+.md-search-result__link:hover {
+  background-color: var(--dracula-selection);
+}
+
+/* Tabs */
+.md-tabs {
+  background-color: var(--dracula-purple);
+}
+
+.md-tabs__link {
+  color: var(--dracula-foreground);
+}
+
+.md-tabs__link--active {
+  color: var(--dracula-yellow);
+}
+
+/* Code copy button */
+.md-clipboard {
+  color: var(--dracula-foreground);
+}
+
+.md-clipboard:hover {
+  color: var(--dracula-cyan);
+}
+
+/* Scroll bar */
+::-webkit-scrollbar {
+  width: 0.4rem;
+  height: 0.4rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--dracula-comment);
+  border-radius: 0.2rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--dracula-purple);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--dracula-current-line);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--dracula-selection);
+  color: var(--dracula-foreground);
+}
+
+/* Task lists */
+.md-typeset .task-list-indicator::before {
+  background-color: var(--dracula-current-line);
+  border: 2px solid var(--dracula-comment);
+}
+
+.md-typeset [type="checkbox"]:checked + .task-list-indicator::before {
+  background-color: var(--dracula-green);
+  border-color: var(--dracula-green);
+}
+
+/* Keyboard keys */
+.md-typeset kbd {
+  background-color: var(--dracula-current-line);
+  border: 1px solid var(--dracula-comment);
+  color: var(--dracula-foreground);
+  box-shadow: 0 2px 0 var(--dracula-comment);
+}
+
+/* Horizontal rule */
+.md-typeset hr {
+  border-bottom: 1px solid var(--dracula-comment);
+}
+
+/* Blockquotes */
+.md-typeset blockquote {
+  border-left: 0.2rem solid var(--dracula-purple);
+  color: var(--dracula-foreground);
+}
+
+/* Details/Summary */
+.md-typeset details {
+  border-left: 0.2rem solid var(--dracula-cyan);
+}
+
+.md-typeset summary {
+  background-color: var(--dracula-current-line);
+}
+
+.md-typeset summary:hover {
+  background-color: var(--dracula-selection);
+}
