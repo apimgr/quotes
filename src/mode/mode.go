@@ -7,8 +7,6 @@ import (
 	"sync"
 )
 
-const appName = "quotes"
-
 // Mode represents the application's operating mode
 type Mode string
 
