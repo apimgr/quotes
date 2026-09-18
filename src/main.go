@@ -18,7 +18,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/apimgr/quotes/src/admin"
 	"github.com/apimgr/quotes/src/anime"
 	"github.com/apimgr/quotes/src/chucknorris"
 	"github.com/apimgr/quotes/src/config"
@@ -166,19 +165,6 @@ func main() {
 
 	// Create HTTP server
 	mux := http.NewServeMux()
-
-	// Initialize admin handler
-	adminHandler := admin.NewHandler(
-		cfg.Server.Admin.Username,
-		cfg.Server.Admin.Password,
-		cfg.Server.Admin.APIToken,
-		cfg.Server.Session.Timeout,
-		false, // SSL enabled
-		Version,
-		Commit,
-		BuildDate,
-	)
-	adminHandler.RegisterRoutes(mux)
 
 	setupRoutes(mux, cfg)
 
