@@ -29,7 +29,7 @@ client_binary: quotes-cli
 - Server pages: `/server/about`, `/server/help`, `/server/healthz`, `/server/privacy`, `/server/terms`
 - CLI client (`quotes-cli`) for shell-pipeline use: `quotes-cli random --category programming`
 - OpenAPI/Swagger docs at `/api/{api_version}/server/swagger`
-- GraphQL at `/graphql`
+- GraphQL at `POST /api/graphql` (the canonical route is `/api/v1/server/graphql`)
 
 **Non-goals:**
 - No user accounts, registration, or login of any kind

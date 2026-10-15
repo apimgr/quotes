@@ -1,201 +1,40 @@
-# Quotes API
+# Quotes
 
-A simple and elegant REST API for serving inspirational quotes with a web UI.
+A public, read-only web application and API for five embedded quote collections: general quotes, anime quotes, Chuck Norris facts, dad jokes, and programming quotes. A companion `quotes-cli` client supports shell use. No accounts, submissions, admin panel, authentication, or runtime external services are part of the product.
 
-## Features
+## Run
 
-- Random quote generation via REST API
-- 20+ pre-loaded inspirational quotes
-- Multiple query options (by ID, category, author)
-- Web UI with interactive quote display
-- Admin panel with authentication
-- SQLite database for settings and admin users
-- Docker support with health checks
-- Multi-platform binaries (Linux, Windows, macOS, BSD)
-
-## Quick Start
-
-### Using Docker
-
-```bash
-# Pull and run the latest image
-docker run -d \
-  --name quotes \
-  -p 8080:80 \
-  -v ./data:/data \
-  ghcr.io/apimgr/quotes:latest
+```sh
+docker build -f docker/Dockerfile -t quotes .
+docker run --rm -p 8080:80 quotes
 ```
 
-Access the API at `http://localhost:8080`
+Open `http://localhost:8080/` to browse and filter the catalog. Quote IDs open individual detail pages at `/quotes/{id}`, and `/random` displays a random quote (optionally filter with `?category=programming`). The server listens on port 80 in the container. A direct binary can be started with `./quotes --port 8080`.
 
-### Using Docker Compose
+## API
 
-```bash
-# Production deployment
-docker-compose up -d
-
-# Development/testing
-docker-compose -f docker-compose.test.yml up -d
+```sh
+curl http://localhost:8080/api/v1/quotes/random
+curl 'http://localhost:8080/api/v1/quotes?category=programming&page=1&limit=20'
+curl http://localhost:8080/api/v1/categories
 ```
 
-### Using Binary
+REST uses `/api/v1/`; GraphQL is at `POST /api/v1/server/graphql`, and OpenAPI JSON is at `/api/v1/server/swagger`. Browser documentation is served at `/server/docs/swagger` and `/server/docs/graphql`. The user-facing pages include `/server/about`, `/server/help`, `/server/healthz`, `/server/privacy`, and `/server/terms`.
 
-```bash
-# Download the latest release
-wget https://github.com/apimgr/quotes/releases/latest/download/quotes-linux-amd64.tar.gz
+## CLI
 
-# Extract
-tar -xzf quotes-linux-amd64.tar.gz
-
-# Run
-./quotes --port 8080
+```sh
+quotes-cli --server http://localhost:8080 random --category programming
+quotes-cli --server http://localhost:8080 categories
+quotes-cli --server http://localhost:8080 quote 42
 ```
 
-## API Endpoints
+The CLI also reads `QUOTES_SERVER` or its user configuration file. There is no default public server URL.
 
-### Public Endpoints
+## Data and configuration
 
-- `GET /api/v1/random` - Get a random quote
-- `GET /api/v1/quotes` - Get all quotes
-- `GET /api/v1/quotes/{id}` - Get a specific quote by ID
-- `GET /api/v1/quotes/category/{category}` - Get quotes by category
-- `GET /api/v1/quotes/author/{author}` - Get quotes by author
-- `GET /api/v1/status` - Get API status and version
-
-### Admin Endpoints (Authentication Required)
-
-- `GET /api/v1/admin/settings` - Get all settings
-- `POST /api/v1/admin/settings` - Set or update a setting
-- `DELETE /api/v1/admin/settings/{key}` - Delete a setting
-
-### Example Request
-
-```bash
-# Get a random quote
-curl http://localhost:8080/api/v1/random
-
-# Response
-{
-  "success": true,
-  "data": {
-    "id": 1,
-    "quote": "The only way to do great work is to love what you do.",
-    "author": "Steve Jobs",
-    "category": "inspiration"
-  }
-}
-```
-
-## Configuration
-
-### Environment Variables
-
-- `PORT` - Server port (default: 8080)
-- `ADDRESS` - Server address (default: 0.0.0.0)
-- `CONFIG_DIR` - Configuration directory
-- `DATA_DIR` - Data directory
-- `LOGS_DIR` - Logs directory
-- `DB_PATH` - Database file path
-- `ADMIN_USER` - Admin username (first run only)
-- `ADMIN_PASSWORD` - Admin password (first run only)
-- `ADMIN_TOKEN` - Admin API token (first run only)
-
-### Admin Credentials
-
-On first run, admin credentials are automatically generated and saved to:
-- `$CONFIG_DIR/admin-credentials.txt`
-
-Or set them manually using environment variables.
-
-## Building from Source
-
-### Prerequisites
-
-- Go 1.23 or later
-- Make (optional)
-
-### Build Commands
-
-```bash
-# Build for all platforms
-make build
-
-# Build for current platform only
-go build -o quotes ./src
-
-# Run tests
-make test
-
-# Create release artifacts
-make release
-
-# Build Docker image (development)
-make docker-dev
-```
+The data is embedded at build time from `src/data/*.json`. The current bundled entries are sample generated records; they should not be described as curated quotations until authorized source collections and licenses are selected. Server configuration is YAML (`server.yml`); rate limiting is enabled by default at 120 requests per client per 60 seconds. See [the documentation](docs/index.md).
 
 ## Development
 
-### Project Structure
-
-```
-quotes/
-├── src/
-│   ├── data/
-│   │   └── quotes.json       # Quote data
-│   ├── quotes/               # Quote service
-│   ├── database/             # Database layer
-│   ├── paths/                # OS-specific paths
-│   ├── server/               # HTTP server
-│   └── main.go              # Entry point
-├── Dockerfile
-├── docker-compose.yml
-├── Makefile
-└── README.md
-```
-
-### Adding New Quotes
-
-Edit `src/data/quotes.json` and add your quote:
-
-```json
-{
-  "id": 21,
-  "quote": "Your inspirational quote here",
-  "author": "Author Name",
-  "category": "category-name"
-}
-```
-
-## Docker Deployment
-
-### Production
-
-Port: `172.17.0.1:64180:80`
-Storage: `./volumes/`
-
-```bash
-docker-compose up -d
-```
-
-### Development
-
-Port: `64181:80`
-Storage: `/tmp/quotes/volumes/`
-
-```bash
-docker-compose -f docker-compose.test.yml up -d
-```
-
-## Web UI
-
-Access the web interface at:
-- Home: `http://localhost:8080/`
-- Admin Panel: `http://localhost:8080/admin`
-
-## License
-
-MIT License - see LICENSE.md for details
-
-## Credits
-
-Created by apimgr
+The project uses Docker-backed Makefile targets (`dev`, `local`, `build`, `test`, `release`, and `docker`). See [development docs](docs/development.md).
