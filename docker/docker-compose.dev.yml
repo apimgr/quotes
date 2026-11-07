@@ -1,0 +1,37 @@
+name: quotes-dev
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "5m"
+    max-file: "1"
+
+services:
+  quotes:
+    image: ghcr.io/apimgr/quotes:devel
+    container_name: quotes-dev
+    hostname: quotes
+    restart: always
+    pull_policy: always
+    logging: *default-logging
+    environment:
+      PORT: 80
+      TZ: ${TZ:-America/New_York}
+    volumes:
+      - ./volumes/config:/config
+      - ./volumes/data:/data
+    ports:
+      - "8081:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:80/server/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    networks:
+      - quotes-dev
+
+networks:
+  quotes-dev:
+    name: quotes-dev
+    external: false

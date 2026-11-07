@@ -1,0 +1,41 @@
+# nginx proxy address - http://172.17.0.1:18080
+
+name: quotes-test
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "5m"
+    max-file: "1"
+
+services:
+  quotes:
+    image: quotes:test
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: quotes-test
+    hostname: quotes
+    restart: "no"
+    logging: *default-logging
+    environment:
+      PORT: 80
+      TZ: ${TZ:-America/New_York}
+    volumes:
+      - ./volumes/config:/config
+      - ./volumes/data:/data
+    ports:
+      - "172.17.0.1:18080:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:80/server/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    networks:
+      - quotes-test
+
+networks:
+  quotes-test:
+    driver: bridge
+    name: quotes-test

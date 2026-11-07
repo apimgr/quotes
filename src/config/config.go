@@ -25,8 +25,9 @@ type ServerConfig struct {
 	Address      string        `yaml:"address"`
 	Mode         string        `yaml:"mode"`
 	UpdateBranch string        `yaml:"update_branch"`
-	Metrics      MetricsConfig `yaml:"metrics"`
-	Logging      LoggingConfig `yaml:"logging"`
+	Metrics      MetricsConfig   `yaml:"metrics"`
+	Logging      LoggingConfig   `yaml:"logging"`
+	RateLimit    RateLimitConfig `yaml:"rate_limit"`
 }
 
 // MetricsConfig contains metrics settings
@@ -35,6 +36,13 @@ type MetricsConfig struct {
 	Endpoint      string `yaml:"endpoint"`
 	IncludeSystem bool   `yaml:"include_system"`
 	IncludeApp    bool   `yaml:"include_app"`
+}
+
+// RateLimitConfig controls the public API's per-client abuse protection.
+type RateLimitConfig struct {
+	Enabled       bool `yaml:"enabled"`
+	Requests      int  `yaml:"requests"`
+	WindowSeconds int  `yaml:"window_seconds"`
 }
 
 // LoggingConfig contains logging settings
@@ -94,6 +102,7 @@ func DefaultConfig() *Config {
 				AccessFormat: "apache",
 				Level:        "info",
 			},
+			RateLimit: RateLimitConfig{Enabled: true, Requests: 120, WindowSeconds: 60},
 		},
 		WebUI: WebUIConfig{
 			Theme:   "dark",
@@ -207,7 +216,6 @@ func saveConfig(cfg *Config, path string) error {
 // generateConfigYAML generates YAML content with comments
 func generateConfigYAML(cfg *Config) string {
 	return fmt.Sprintf(`# Quotes API Server Configuration
-# Documentation: https://quotes.apimgr.us/docs
 
 server:
   port: "%s"
@@ -223,6 +231,11 @@ server:
   logging:
     access_format: "%s"
     level: "%s"
+
+  rate_limit:
+    enabled: %t
+    requests: %d
+    window_seconds: %d
 
 web-ui:
   theme: "%s"
@@ -249,6 +262,9 @@ web-security:
 		cfg.Server.Metrics.IncludeApp,
 		cfg.Server.Logging.AccessFormat,
 		cfg.Server.Logging.Level,
+		cfg.Server.RateLimit.Enabled,
+		cfg.Server.RateLimit.Requests,
+		cfg.Server.RateLimit.WindowSeconds,
 		cfg.WebUI.Theme,
 		cfg.WebUI.Logo,
 		cfg.WebUI.Favicon,

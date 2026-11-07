@@ -1,7 +1,6 @@
 site_name: quotes Documentation
 site_description: High-performance REST API server for multiple quote collections
 site_author: apimgr
-site_url: https://quotes.readthedocs.io
 
 repo_name: apimgr/quotes
 repo_url: https://github.com/apimgr/quotes
@@ -11,11 +10,23 @@ copyright: Copyright &copy; 2024 apimgr
 
 theme:
   name: material
-  custom_dir: overrides
   palette:
-    scheme: dracula
-    primary: deep purple
-    accent: pink
+    - scheme: slate
+      primary: deep purple
+      accent: pink
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to auto mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to dark mode
   font:
     text: Roboto
     code: Fira Code
@@ -36,8 +47,13 @@ theme:
 
 nav:
   - Home: index.md
-  - API Reference: API.md
-  - Server Guide: SERVER.md
+  - Installation: installation.md
+  - Configuration: configuration.md
+  - API Reference: api.md
+  - CLI: cli.md
+  - Security: security.md
+  - Integrations: integrations.md
+  - Development: development.md
   - GitHub: https://github.com/apimgr/quotes
 
 markdown_extensions:

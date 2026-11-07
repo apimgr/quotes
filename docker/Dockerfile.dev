@@ -1,0 +1,40 @@
+FROM casjaysdev/go:latest AS builder
+
+RUN apk add --no-cache bash git
+
+ARG TARGETARCH
+ARG VERSION=devel
+ARG BUILD_EPOCH=0
+ARG COMMIT_ID=unknown
+ARG OFFICIAL_SITE=
+
+WORKDIR /build
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN mkdir -p /app/binary && \
+    CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} go build -buildvcs=false -trimpath \
+      -ldflags "-X 'main.Version=${VERSION}' -X 'main.CommitID=${COMMIT_ID}' -X 'main.BuildEpoch=${BUILD_EPOCH}' -X 'main.OfficialSite=${OFFICIAL_SITE}'" \
+      -o /app/binary/quotes ./src && \
+    CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} go build -buildvcs=false -trimpath \
+      -ldflags "-X 'main.Version=${VERSION}' -X 'main.CommitID=${COMMIT_ID}' -X 'main.BuildEpoch=${BUILD_EPOCH}'" \
+      -o /app/binary/quotes-cli ./src/client
+
+FROM alpine:latest
+
+RUN apk add --no-cache bash curl git tini tor
+COPY --from=builder /app/binary/quotes /usr/local/bin/quotes
+COPY --from=builder /app/binary/quotes-cli /usr/local/bin/quotes-cli
+COPY docker/rootfs/ /
+COPY docker/Dockerfile.dev /root/Dockerfile
+RUN chmod 755 /usr/local/bin/*
+
+ENV TZ=America/New_York \
+    DATABASE_DIR=/data/db/sqlite \
+    DEBUG=true
+
+EXPOSE 80
+STOPSIGNAL SIGRTMIN+3
+HEALTHCHECK --start-period=10m --interval=5m --timeout=15s --retries=3 \
+    CMD /usr/local/bin/quotes --status || exit 1
+ENTRYPOINT [ "tini", "-p", "SIGTERM", "--", "/usr/local/bin/entrypoint.sh" ]
