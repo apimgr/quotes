@@ -16,6 +16,7 @@ All API routes are public and read-only. REST success responses use `{ "ok": tru
 | GET | `/api/v1/quotes/random.txt` | Plain-text random quote |
 | GET | `/api/v1/server/{about,help,privacy,terms}` | Machine-readable page information |
 | GET | `/api/v1/server/healthz` | JSON health status |
+| GET | `/api/v1/server/healthz.txt` | Plain-text health status |
 | GET | `/api/v1/server/help/mcp` | MCP connection details and tools |
 | GET | `/api/v1/server/dpo` | Data-protection contact details |
 | GET | `/api/v1/server/security` | Security contact information |
@@ -45,4 +46,4 @@ GraphQL supports `quote(id)`, `randomQuote(category)`, `quotes(category, author,
 
 ## Browser pages
 
-The server-rendered catalog at `/` supports category and author filters and pagination. The dark, light, or automatic theme is stored in the `theme` cookie after a preference form submission. `/server/preferences` changes the theme, and `/server/preferences/sync` exports or imports the browser preference link/code. `/random` selects a random quote and `/quotes/{id}` shows a quote by ID. The about, help, help/MCP, health, privacy, terms, data-protection, and security pages are at `/server/about`, `/server/help`, `/server/help/mcp`, `/server/healthz`, `/server/privacy`, `/server/terms`, `/server/dpo`, and `/server/security`. Interactive references are at `/server/docs/swagger` and `/server/docs/graphql`.
+The server-rendered catalog at `/` supports category and author filters and pagination. The dark, light, or automatic theme is stored in the `theme` cookie after a preference form submission. `/server/preferences` changes the theme, and `/server/preferences/sync` exports or imports the browser preference link/code. `/random` selects a random quote and `/quotes/{id}` shows a quote by ID. Standard pages include `/server/about`, `/server/help`, `/server/help/mcp`, `/server/healthz`, `/server/privacy`, `/server/terms`, `/server/dpo`, `/server/security`, `/server/security/policy`, and `/server/security/thanks`. Interactive references are at `/server/docs/swagger` and `/server/docs/graphql`.

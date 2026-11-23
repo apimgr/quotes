@@ -1,6 +1,6 @@
 # Quotes
 
-[![CI](https://github.com/apimgr/quotes/actions/workflows/ci.yml/badge.svg)](https://github.com/apimgr/quotes/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/apimgr/quotes)](https://github.com/apimgr/quotes/releases) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md) [![Documentation](https://readthedocs.org/projects/apimgr-quotes/badge/?version=latest)](https://apimgr-quotes.readthedocs.io/)
+[![CI](https://github.com/apimgr/quotes/actions/workflows/ci.yml/badge.svg)](https://github.com/apimgr/quotes/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/apimgr/quotes)](https://github.com/apimgr/quotes/releases) [![License](https://img.shields.io/github/license/apimgr/quotes)](LICENSE.md) [![Documentation](https://readthedocs.org/projects/apimgr-quotes/badge/?version=latest)](https://apimgr-quotes.readthedocs.io/)
 
 Quotes serves five embedded quote collections through a public read-only web interface, REST API, GraphQL endpoint, and CLI. Collection data ships in the executable; no accounts or quote submissions are supported.
 
@@ -53,7 +53,7 @@ quotes-cli --server http://localhost:8080 categories
 quotes-cli --server http://localhost:8080 quote 42
 ```
 
-The CLI accepts `--server URL`, `QUOTES_SERVER`, or its user config. It supports `random`, `categories`, and `quote ID`; `--output` accepts `plain` or `json`.
+The CLI accepts `--server URL`, `QUOTES_SERVER`, or its user config. It supports `random`, `categories`, and `quote ID`; `--output` accepts `plain` or `json`. `--lang` supports English, Spanish, French, Arabic, German, and Italian.
 
 ## Web and API
 

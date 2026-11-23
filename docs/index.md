@@ -7,7 +7,7 @@ The application does not provide accounts or submissions. Quote content is embed
 ## Interfaces
 
 - Browser: `/` with category and author filters, pagination, and system/light/dark themes; `/random` for a random quote; `/quotes/{id}` for a detail page.
-- Server pages: about, help, health, privacy, and terms under `/server/`.
+- Server pages: about, help, MCP help, DPO, security, security policy, security acknowledgments, health, privacy, terms, preferences, and preference sync under `/server/`.
 - REST: `/api/v1/` with quote, category, and health routes. See [API reference](api.md).
 - OpenAPI: `/api/v1/server/swagger`; browser page at `/server/docs/swagger`.
 - GraphQL: `POST /api/v1/server/graphql`; browser explorer at `/server/docs/graphql`.

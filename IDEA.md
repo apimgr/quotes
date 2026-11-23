@@ -13,6 +13,7 @@ repo: https://github.com/apimgr/quotes
 license: MIT
 binary: quotes
 client_binary: quotes-cli
+owner_token: quotes_owner_token_qwhzkfta
 
 ## Business logic
 

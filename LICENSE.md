@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2024 apimgr
+Copyright (c) 2026 apimgr
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,18 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Third-party dependencies
+
+The following dependencies retain their respective licenses:
+
+| Dependency | License |
+|---|---|
+| [github.com/graphql-go/graphql](https://github.com/graphql-go/graphql) | MIT |
+| [github.com/spf13/cobra](https://github.com/spf13/cobra) | Apache-2.0 |
+| [github.com/spf13/pflag](https://github.com/spf13/pflag) | BSD-3-Clause |
+| [github.com/inconshreveable/mousetrap](https://github.com/inconshreveable/mousetrap) | Apache-2.0 |
+| [golang.org/x/crypto](https://go.googlesource.com/crypto) | BSD-3-Clause |
+| [golang.org/x/net](https://go.googlesource.com/net) | BSD-3-Clause |
+| [golang.org/x/text](https://go.googlesource.com/text) | BSD-3-Clause |
+| [gopkg.in/yaml.v3](https://github.com/go-yaml/yaml) | MIT OR Apache-2.0 |
