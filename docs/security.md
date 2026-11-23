@@ -7,4 +7,4 @@ The rate limiter uses the direct remote address and does not trust caller-suppli
 Quote records are embedded in the executable. Only include material with documented redistribution rights and retain source attribution and license information. The current sample data is illustrative and must not be presented as an authoritative or licensed corpus.
 
 
-The operator Bearer token is generated into `secrets.yml` with mode `0600`; keep it private and never place it in browser storage, pages, or logs.
+The operator Bearer token is generated into `secrets.yml` with mode `0600`; keep it private and never place it in browser storage, pages, or logs. Browser preference writes use a `csrf_token` double-submit cookie and require the same token in the form. Preference values are limited to the supported theme and language enums; sync imports are additive and ignore unsupported fields. The preference API only writes browser preference cookies; protected API routes do not use browser cookie credentials.

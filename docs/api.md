@@ -19,6 +19,10 @@ All API routes are public and read-only. REST success responses use `{ "ok": tru
 | GET | `/api/v1/server/help/mcp` | MCP connection details and tools |
 | GET | `/api/v1/server/dpo` | Data-protection contact details |
 | GET | `/api/v1/server/security` | Security contact information |
+| GET | `/api/v1/server/preferences` | Read the browser's theme and language preferences |
+| POST | `/api/v1/server/preferences` | Apply valid theme or language preferences as browser cookies |
+| GET | `/api/v1/server/preferences/sync` | Export preferences as a URL and base64url code |
+| GET | `/api/v1/server/preferences/sync/import` | Import allowed preferences from direct parameters or a code |
 | POST | `/api/v1/server/mcp` | Bearer-authenticated MCP Streamable HTTP endpoint |
 | POST | `/api/mcp`, `/mcp` | Direct MCP aliases |
 | GET | `/api/v1/server/swagger` | OpenAPI document |
@@ -41,4 +45,4 @@ GraphQL supports `quote(id)`, `randomQuote(category)`, `quotes(category, author,
 
 ## Browser pages
 
-The server-rendered catalog at `/` supports category and author filters, pagination, and system/light/dark themes. `/random` selects a random quote and `/quotes/{id}` shows a quote by ID. The about, help, help/MCP, health, privacy, terms, data-protection, and security pages are at `/server/about`, `/server/help`, `/server/help/mcp`, `/server/healthz`, `/server/privacy`, `/server/terms`, `/server/dpo`, and `/server/security`. Interactive references are at `/server/docs/swagger` and `/server/docs/graphql`.
+The server-rendered catalog at `/` supports category and author filters and pagination. The dark, light, or automatic theme is stored in the `theme` cookie after a preference form submission. `/server/preferences` changes the theme, and `/server/preferences/sync` exports or imports the browser preference link/code. `/random` selects a random quote and `/quotes/{id}` shows a quote by ID. The about, help, help/MCP, health, privacy, terms, data-protection, and security pages are at `/server/about`, `/server/help`, `/server/help/mcp`, `/server/healthz`, `/server/privacy`, `/server/terms`, `/server/dpo`, and `/server/security`. Interactive references are at `/server/docs/swagger` and `/server/docs/graphql`.
