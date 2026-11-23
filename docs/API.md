@@ -1,3 +1,3 @@
 # API reference
 
-Use the canonical versioned REST interface documented in [api.md](api.md). GraphQL is available at `POST /api/v1/server/graphql` and `/api/v1/server/graphql`; OpenAPI JSON is at `/api/v1/server/swagger`. No legacy root `/graphql` endpoint is served.
+The canonical API documentation is [api.md](api.md). REST routes use `/api/v1/`; GraphQL is available at `POST /api/v1/server/graphql` with `/api/graphql` as a compatibility alias. OpenAPI JSON is at `/api/v1/server/swagger` with `/api/swagger` as a compatibility alias.

@@ -1,3 +1,3 @@
 # Server guide
 
-See [installation](installation.md), [configuration](configuration.md), and [security](security.md) for running and operating the server. Quotes is read-only and keeps all quote collections in its executable; it has no accounts, admin panel, persistent database, or external runtime dependencies.
+Use the [installation](installation.md), [configuration](configuration.md), and [security](security.md) guides to run the server. The service is public and read-only, embeds its quote collections in the executable, and provides no account or admin interface.

@@ -1,27 +1,51 @@
 # Quotes
 
-A public, read-only web application and API for five embedded quote collections: general quotes, anime quotes, Chuck Norris facts, dad jokes, and programming quotes. A companion `quotes-cli` client supports shell use. No accounts, submissions, admin panel, authentication, or runtime external services are part of the product.
+[![CI](https://github.com/apimgr/quotes/actions/workflows/ci.yml/badge.svg)](https://github.com/apimgr/quotes/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/apimgr/quotes)](https://github.com/apimgr/quotes/releases) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md) [![Documentation](https://readthedocs.org/projects/apimgr-quotes/badge/?version=latest)](https://apimgr-quotes.readthedocs.io/)
 
-## Run
+Quotes serves five embedded quote collections through a public read-only web interface, REST API, GraphQL endpoint, and CLI. Collection data ships in the executable; no accounts or quote submissions are supported.
+
+## Install
+
+Download the latest release from [GitHub Releases](https://github.com/apimgr/quotes/releases/latest). Each release contains server and CLI binaries for Linux, macOS, Windows, and FreeBSD on amd64 and arm64.
+
+| Platform | Server binary | CLI binary |
+|---|---|---|
+| Linux amd64 | `quotes-linux-amd64` | `quotes-cli-linux-amd64` |
+| Linux arm64 | `quotes-linux-arm64` | `quotes-cli-linux-arm64` |
+| macOS Intel | `quotes-darwin-amd64` | `quotes-cli-darwin-amd64` |
+| macOS Apple Silicon | `quotes-darwin-arm64` | `quotes-cli-darwin-arm64` |
+| Windows amd64 | `quotes-windows-amd64.exe` | `quotes-cli-windows-amd64.exe` |
+| Windows arm64 | `quotes-windows-arm64.exe` | `quotes-cli-windows-arm64.exe` |
+| FreeBSD amd64 | `quotes-freebsd-amd64` | `quotes-cli-freebsd-amd64` |
+| FreeBSD arm64 | `quotes-freebsd-arm64` | `quotes-cli-freebsd-arm64` |
+
+On Linux, install the matching server binary with:
 
 ```sh
-docker build -f docker/Dockerfile -t quotes .
-docker run --rm -p 8080:80 quotes
+arch=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+curl -LSsf "https://github.com/apimgr/quotes/releases/latest/download/quotes-linux-${arch}" -o quotes
+chmod +x quotes
+./quotes --port 8080
 ```
 
-Open `http://localhost:8080/` to browse and filter the catalog. Quote IDs open individual detail pages at `/quotes/{id}`, and `/random` displays a random quote (optionally filter with `?category=programming`). The server listens on port 80 in the container. A direct binary can be started with `./quotes --port 8080`.
-
-## API
+On macOS, choose the matching `darwin` binary, make it executable, then remove quarantine if needed:
 
 ```sh
-curl http://localhost:8080/api/v1/quotes/random
-curl 'http://localhost:8080/api/v1/quotes?category=programming&page=1&limit=20'
-curl http://localhost:8080/api/v1/categories
+chmod +x quotes
+xattr -d com.apple.quarantine ./quotes 2>/dev/null || true
 ```
 
-REST uses `/api/v1/`; GraphQL is at `POST /api/v1/server/graphql`, and OpenAPI JSON is at `/api/v1/server/swagger`. Browser documentation is served at `/server/docs/swagger` and `/server/docs/graphql`. The user-facing pages include `/server/about`, `/server/help`, `/server/healthz`, `/server/privacy`, and `/server/terms`.
+Windows users can download the matching `.exe` files and add their directory to `PATH`.
 
-## CLI
+## Docker
+
+```sh
+docker compose -f docker/docker-compose.yml up -d
+```
+
+The container listens on port 80. Map it to a host port and persist `/config` so generated `server.yml` and `secrets.yml` remain available.
+
+## quotes-cli
 
 ```sh
 quotes-cli --server http://localhost:8080 random --category programming
@@ -29,12 +53,18 @@ quotes-cli --server http://localhost:8080 categories
 quotes-cli --server http://localhost:8080 quote 42
 ```
 
-The CLI also reads `QUOTES_SERVER` or its user configuration file. There is no default public server URL.
+The CLI accepts `--server URL`, `QUOTES_SERVER`, or its user config. It supports `random`, `categories`, and `quote ID`; `--output` accepts `plain` or `json`.
 
-## Data and configuration
+## Web and API
 
-The data is embedded at build time from `src/data/*.json`. The current bundled entries are sample generated records; they should not be described as curated quotations until authorized source collections and licenses are selected. Server configuration is YAML (`server.yml`); rate limiting is enabled by default at 120 requests per client per 60 seconds. See [the documentation](docs/index.md).
+Open `http://localhost:8080/` to filter and browse quotes. REST uses `/api/v1/`; GraphQL is at `POST /api/v1/server/graphql`; OpenAPI JSON is at `/api/v1/server/swagger`. Browser API references are at `/server/docs/swagger` and `/server/docs/graphql`. The MCP Streamable HTTP endpoint is `/api/v1/server/mcp` and requires the operator Bearer token stored in `secrets.yml`.
+
+See the [API documentation](docs/api.md), [configuration reference](docs/configuration.md), and [integration guide](docs/integrations.md).
 
 ## Development
 
-The project uses Docker-backed Makefile targets (`dev`, `local`, `build`, `test`, `release`, and `docker`). See [development docs](docs/development.md).
+Go development uses Docker-backed Makefile targets: `make dev`, `make local`, `make build`, `make test`, `make release`, and `make docker`. The release build targets all eight OS/architecture pairs listed above. See [development documentation](docs/development.md).
+
+## License
+
+MIT — see [LICENSE.md](LICENSE.md).

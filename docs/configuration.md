@@ -1,9 +1,28 @@
 # Configuration
 
-The server accepts `--address`, `--port`, and `--config`. The default configuration path is selected by the application configuration package; pass `--config` to use a specific `server.yml` file. The initial configuration contains server bind settings, web theme, logging, and rate-limit settings.
+The server reads `server.yml`; use `--config` to select a file and `--address` or `--port` to override bind settings. When the configuration file is absent, the server writes defaults. It also creates a neighboring `secrets.yml` with an operator token and encryption key, using owner-only file permissions. Keep that file private and back it up securely. Never commit it.
 
-The `server.rate_limit` settings are `enabled`, `requests`, and `window_seconds`. Defaults are enabled, 120 requests, and 60 seconds per client address. Set `server.address` and `server.port` in the configuration or use the corresponding command-line flags.
+## Server settings
 
-The CLI stores its server URL in the invoking user's configuration directory with user-only file permissions. Use `quotes-cli --server https://example.invalid ...` for a one-off URL, or set `QUOTES_SERVER`. The project does not define a default public server; no official site URL is assumed.
+| Setting | Default | Purpose |
+|---|---|---|
+| `server.address` | `0.0.0.0` | Bind address. |
+| `server.port` | `8080` at runtime | HTTP listener port. |
+| `server.fqdn` | empty | Public host name when configured. |
+| `server.mode` | `production` | Application mode. |
+| `server.rate_limit.enabled` | `true` | Enable per-client request limits. |
+| `server.rate_limit.requests` | `120` | Requests allowed per client per window. |
+| `server.rate_limit.window_seconds` | `60` | Rate-limit window length. |
+| `server.logging.access_format` | `apache` | Access-log format setting. |
+| `server.logging.level` | `info` | Log verbosity setting. |
+| `server.metrics.enabled` | `false` | Metrics setting; metrics are not exposed by the current HTTP handler. |
+| `server.metrics.endpoint` | `/metrics` | Configured metrics path. |
+| `web-ui.theme` | `dark` | Default web theme. |
+| `web-ui.logo`, `web-ui.favicon` | empty | Branding asset values. |
+| `web-ui.notifications.enabled` | `true` | Announcement setting. |
+| `web-ui.notifications.announcements` | empty list | Announcement text entries. |
+| `web-robots.allow` | `/`, `/api` | Allowed robots paths. |
+| `web-robots.deny` | `/debug` | Disallowed robots paths. |
+| `web-security.cors` | `*` | CORS allow-origin value. |
 
-All quote content is compiled into the binary. There is no runtime database, account configuration, admin panel, or external service integration.
+`secrets.yml` stores `server.token` and `server.security.encryption_key`; it is generated automatically and must not be added to source control. `server.token` is required for MCP requests. The CLI accepts `--server`, `QUOTES_SERVER`, or a user configuration file. Quote content is embedded in the binary; there is no runtime database.

@@ -1,6 +1,6 @@
 # CLI
 
-`quotes-cli` retrieves quotes from a Quotes API server. It has no built-in server URL, so supply `--server URL`, set `QUOTES_SERVER`, or configure the CLI file.
+`quotes-cli` retrieves quotes from a Quotes API server. Supply `--server URL`, set `QUOTES_SERVER`, or configure the CLI file; the project does not assume a default public server.
 
 ```sh
 quotes-cli --server http://localhost:8080 random --category programming
@@ -9,4 +9,4 @@ quotes-cli --server http://localhost:8080 quote 42
 quotes-cli --server http://localhost:8080 --output json random
 ```
 
-Commands are `random [--category CATEGORY]`, `categories`, and `quote ID`. `--output` accepts `plain` or `json`. The CLI makes bounded HTTP requests, reports API failures on stderr, and does not require authentication.
+Commands are `random [--category CATEGORY]`, `categories`, and `quote ID`. `--output` accepts `plain` or `json`. Requests are bounded, API failures are written to stderr, and no authentication is required.

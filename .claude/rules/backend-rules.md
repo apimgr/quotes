@@ -3,11 +3,18 @@
 ⚠️ **These rules are NON-NEGOTIABLE. Violations are bugs.** ⚠️
 
 ## CRITICAL - NEVER DO
-- Do not persist quote data or visitor PII.
-- Do not trust forwarded client IP headers unless a trusted proxy policy is implemented.
+- Do not persist quote data or visitor PII outside the defined report and operational workflows.
+- Do not trust forwarded client IP headers without a trusted-proxy policy.
+- Do not expose secrets, raw stack traces, or unsafe user-controlled content.
 
 ## CRITICAL - ALWAYS DO
-- Bound requests and apply configured per-client rate limits.
-- Use parameterized database access if a future spec adds a database.
+- Bound requests, apply configured per-client rate limits, and use canonical errors.
+- Use parameterized database operations, connection pooling, and timeouts.
+- Implement security logging, token checks, and overlay-network rules as prescribed.
+
+## Key rules summary
+- Security headers and output sanitization apply to every public route.
+- Use the required embedded or external dependency only under its documented trust boundary.
+- Tor and I2P behavior follows PART 31; do not infer client identity from spoofable headers.
 
 For complete details, see AI.md PART 9, 10, 11, 31

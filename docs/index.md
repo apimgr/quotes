@@ -1,16 +1,17 @@
 # Quotes
 
-Quotes is a read-only service for five embedded collections: general quotes, anime quotes, Chuck Norris facts, dad jokes, and programming quotes. Browse the server rendered interface or use the public REST and GraphQL APIs and companion `quotes-cli` client.
+Quotes is a public read-only application for five embedded collections: general quotes, anime, Chuck Norris facts, dad jokes, and programming quotes. Browse the server-rendered interface or use the REST and GraphQL APIs, the authenticated MCP tools, and the companion `quotes-cli` client.
 
-The application does not store user data or call external services. Collection contents ship inside the binary. The currently bundled records are generated sample entries and should not be represented as curated or authoritative quotations until licensed source data is selected.
+The application does not provide accounts or submissions. Quote content is embedded at build time; the current bundled records are illustrative sample entries and should not be described as curated or authoritative quotations. Verify rights before redistributing quote content.
 
 ## Interfaces
 
-- Browser: `/` with category and author filters, pagination, and system/light/dark themes; `/random` for a random quote and `/quotes/{id}` for a quote detail page.
-- REST: `/api/v1/quotes`, `/api/v1/quotes/random`, `/api/v1/categories`, and `/api/v1/quotes/{id}`.
-- OpenAPI: `/api/v1/server/swagger`; browser documentation at `/server/docs/swagger`.
+- Browser: `/` with category and author filters, pagination, and system/light/dark themes; `/random` for a random quote; `/quotes/{id}` for a detail page.
+- Server pages: about, help, health, privacy, and terms under `/server/`.
+- REST: `/api/v1/` with quote, category, and health routes. See [API reference](api.md).
+- OpenAPI: `/api/v1/server/swagger`; browser page at `/server/docs/swagger`.
 - GraphQL: `POST /api/v1/server/graphql`; browser explorer at `/server/docs/graphql`.
-- Server information: `/server/about`, `/server/help`, `/server/healthz`, `/server/privacy`, and `/server/terms`.
+- MCP: `POST /api/v1/server/mcp` (operator Bearer token required); help at `/server/help/mcp`.
 - CLI: `quotes-cli --server URL random --category programming`.
 
 Start with [installation](installation.md), [configuration](configuration.md), or the [API reference](api.md).

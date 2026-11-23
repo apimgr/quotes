@@ -1,6 +1,6 @@
 ## Project description
 
-Quotes is a full-stack Go web application serving a curated multi-category collection of quotes through a versioned REST API, GraphQL endpoint, and a server-side rendered web UI. Categories include general inspirational quotes, anime quotes, Chuck Norris facts, dad jokes, and programming quotes. All quote data is embedded in the binary at build time. A companion CLI tool lets users pull random or category-filtered quotes directly from the terminal. Deployed as a single self-contained static binary.
+Quotes is a public, read-only quote service with a server-rendered browser, versioned REST API, GraphQL endpoint, and companion CLI. Its embedded collections cover general quotes, anime, Chuck Norris facts, dad jokes, and programming. Operators distribute collection updates with application releases.
 
 ## Project variables
 
@@ -26,21 +26,21 @@ client_binary: quotes-cli
 - Author-filtered retrieval
 - List all available categories with quote counts
 - Full web frontend (server-side Go templates, dark/light/auto theme, PWA, mobile-first)
-- Server pages: `/server/about`, `/server/help`, `/server/healthz`, `/server/privacy`, `/server/terms`
+- Standard server pages and preferences, help, security, privacy, contact, and integration surfaces required by AI.md PART 16
 - CLI client (`quotes-cli`) for shell-pipeline use: `quotes-cli random --category programming`
 - OpenAPI/Swagger docs at `/api/{api_version}/server/swagger`
 - GraphQL at `POST /api/graphql` (the canonical route is `/api/v1/server/graphql`)
 
 **Non-goals:**
-- No user accounts, registration, or login of any kind
+- No user accounts, registration, or login. Template-required owner and linked credentials are non-account identities for token management and MCP access
 - No admin web panel (server configured via `server.yml` only)
 - No user-submitted or community quotes (curated dataset only, updated via releases)
-- No paid tiers, no API keys, no rate-limited access tiers
+- No paid tiers or customer API keys. Template-required abuse rate limiting and linked MCP credentials do not create access tiers
 - No voting, favoriting, or social features
 
 ### Roles & permissions
 
-There are no user roles. All endpoints are public and require no authentication.
+There are no user accounts. Public browsing, REST, and GraphQL require no authentication. Template-required MCP and credential-management actions use revocable credentials without creating accounts.
 
 | Actor | Access |
 |-------|--------|
@@ -59,20 +59,21 @@ There are no user roles. All endpoints are public and require no authentication.
 | `author` | string — attributed author or character name | Public |
 | `category` | string — category (anime, chucknorris, dadjokes, programming, quotes) | Public |
 
-No PII stored or served.
+Quote records contain no PII. The template-required contact reporting flow handles reporter-submitted PII under its configured retention and delivery rules. Browser preference cookies contain no PII.
 
 ### Trust boundaries & external services
 
 | Boundary | Trust level | Notes |
 |----------|-------------|-------|
 | Quote dataset (embedded at build) | Fully trusted | Static, compiled into binary |
-| Incoming HTTP requests | **Untrusted** | All query parameters validated |
+| Incoming HTTP requests | **Untrusted** | Query parameters, credentials, and report submissions are validated |
+| Contact report submitters | **Untrusted** | Abuse, DMCA, privacy, and security reports can contain untrusted text and links |
 
-No external services called at runtime.
+The quote retrieval path uses only the embedded catalog. Template-required operator-configured subsystems may contact their explicitly configured mail, certificate, GeoIP, Tor, or I2P services; each integration must document its trust assumptions and failure behavior before it is enabled.
 
 ### Threat model & abuse cases
 
-**Primary assets:** service availability.
+**Primary assets:** service availability, quote-content provenance, operator credentials and configuration secrets, and any personal information submitted through the required report workflow.
 
 **Attacker/abuser goals:**
 - DoS via high-rate requests
@@ -82,9 +83,42 @@ No external services called at runtime.
 - Rate limiting on all endpoints
 - Request size limits on all inputs
 - Paginated list endpoints limit per-request data volume
-- No user accounts eliminates credential stuffing and privilege escalation entirely
+- No user accounts removes account registration and account-based privilege escalation; credential actions remain protected by token validation
+- Report submissions use the template-defined anti-spam, content, origin, and rate-limit checks and never add quotes to the dataset
 
 ### Security decisions & exceptions
 
-- **No authentication on any endpoint**: intentional. Public read-only reference API.
-- **All responses include `Access-Control-Allow-Origin: *`**: intentional. Public data API designed for cross-origin browser use.
+- **Public read-only REST and GraphQL**: intentional. MCP and token-management surfaces follow AI.md credential requirements.
+- **The quote API is cross-origin readable**: intentional. It serves public data. Other routes follow the configured CORS policy and credential rules in AI.md.
+
+### API routes
+
+Project-defined quote routes are public and read-only. Template-defined pages and protocols follow AI.md PART 16 and are included here so the product surface remains explicit.
+
+| Method | Path | Auth | Purpose and request/response summary |
+|---|---|---|---|
+| GET | `/api/v1` | None | API identity, version, and category counts. |
+| GET | `/api/v1/categories` | None | Category names and counts. |
+| GET | `/api/v1/quotes` | None | Paginated quotes; optional category, author, page, and limit. |
+| GET | `/api/v1/categories/{category}/quotes` | None | Paginated quotes within a category. |
+| GET | `/api/v1/quotes/random` | None | One random quote, optionally filtered by category. |
+| GET | `/api/v1/quotes/{id}` | None | One quote by global ID. |
+| GET | `/api/v1/quotes.txt` | None | Plain-text quote list. |
+| GET | `/api/v1/quotes/random.txt` | None | Plain-text random quote. |
+| GET | `/api/v1/server/{about,help,privacy,terms}` | None | Machine-readable page content. |
+| GET | `/api/v1/server/healthz` | None | Health status. |
+| GET | `/api/v1/server/swagger`, `/api/swagger` | None | OpenAPI document and direct alias. |
+| POST | `/api/v1/server/graphql`, `/api/graphql` | None | GraphQL query and direct alias. |
+| GET | `/api/healthz` | None | Health compatibility route. |
+| GET | `/api/v1/server/preferences` | None | Read/update browser preferences through cookies. |
+| GET, POST | `/api/v1/server/preferences/sync` | None | Export/import browser preferences. |
+| GET | `/api/v1/server/preferences/sync/import` | None | Apply validated shared preference values. |
+| GET | `/api/v1/server/help/mcp` | None | MCP connection information. |
+| POST | `/api/v1/server/mcp`, `/api/mcp`, `/mcp` | Linked credential | Streamable HTTP access to quote tools. |
+| GET | `/api/v1/server/dpo` | None | Data-protection contact details. |
+| GET | `/api/v1/server/security` | None | Security reporting channels. |
+| GET | `/api/v1/server/security/policy` | None | Disclosure policy. |
+| GET | `/api/v1/server/security/thanks` | None | Security acknowledgments. |
+| GET, POST | `/api/v1/server/contact` | None | Report-form description and validated report submission. |
+
+The browser surface includes `/`, `/random`, `/quotes/{id}`, `/server/about`, `/server/privacy`, `/server/contact`, `/server/help`, `/server/help/mcp`, `/server/terms`, `/server/dpo`, `/server/security`, `/server/healthz`, `/server/preferences`, `/server/preferences/sync`, `/server/preferences/tokens`, `/server/docs/swagger`, and `/server/docs/graphql`. Optional pages disabled by configuration are not registered and return 404.
