@@ -1,126 +1,136 @@
 # Configuration
 
-The server reads `{config_dir}/server.yml`; `--config` selects the configuration directory. `--data`, `--cache`, `--log`, `--backup`, and `--pid` override filesystem locations. `--address`, `--port`, and `--baseurl` override bind and URL-prefix settings. Directory overrides preserve absolute paths, resolve relative paths against the startup working directory, and reject control characters and `..` segments. When the configuration file is absent, the server writes defaults, including an unused 64xxx port (port 80 in an application container). It also creates a neighboring `secrets.yml` with an operator token and encryption key, using owner-only file permissions. Keep that file private and back it up securely. Never commit it.
+Configuration is file-backed. `AI.md` PART 5 defines the configuration contract; `IDEA.md` defines product behavior. The merged files are the only source of operator-editable settings. Database records hold application state, not configuration. There is no web administration panel or runtime configuration mutation API.
 
-Configuration is merged in this order: built-in defaults, `server.yml`, sorted `yaml.d/*.yml` and `yaml.d/*.yaml` drop-ins, then `secrets.yml`. The drop-in directory is private (`0700`) and each configuration file is private (`0600`). Hidden files, backups, and non-YAML files are ignored. Use area files such as `yaml.d/security.yml`, `yaml.d/contact.yml`, `yaml.d/privacy.yml`, and `yaml.d/branding.yml` to keep settings grouped by purpose.
+## Files and precedence
 
-## Server settings
+The configuration directory contains `server.yml`, `yaml.d/` area files, and `secrets.yml`. The merge order is built-in defaults, `server.yml`, `yaml.d/*.yml` and `yaml.d/*.yaml` in byte-wise filename order, then `secrets.yml`. Later values override earlier values. Maps merge recursively; lists and scalars replace the earlier value. CLI flags and environment variables have the precedence specified for each setting.
 
-| Setting | Default | Purpose |
+`server.yml` holds node settings: `server.port`, `server.address`, `server.fqdn`, `server.mode`, `server.api_version`, `server.baseurl`, `server.pidfile`, `server.daemonize`, `server.debug.*`, `server.database`, `server.cache`, `server.ssl`, and `server.trusted_proxies`. Other sections belong in area files:
+
+| File | Sections |
+|---|---|
+| `yaml.d/branding.yml` | `server.branding`, `server.seo`, `web.ui` |
+| `yaml.d/web.yml` | `web.*` except `web.ui`; `server.cors`, `server.csrf`, `server.url_detection`, `server.compression`, `server.healthz`, `server.i18n` |
+| `yaml.d/pages.yml` | `server.pages` (report form, antispam, help pages) |
+| `yaml.d/contact.yml` | `server.contact` |
+| `yaml.d/privacy.yml` | `server.privacy`, `server.compliance`, `server.tracking` |
+| `yaml.d/security.yml` | `server.security`, `server.rate_limit`, `server.geoip`, `server.limits`, `server.tokens`, `data.*` |
+| `yaml.d/logs.yml` | `server.logs` |
+| `yaml.d/metrics.yml` | `server.metrics` |
+| `yaml.d/notifications.yml` | `server.notifications` |
+| `yaml.d/tor.yml` | `server.tor`, top-level `tor` |
+| `yaml.d/i2p.yml` | `server.i2p` |
+| `yaml.d/maintenance.yml` | `server.maintenance`, `server.scheduler`, `server.update`, `server.auto_update`, `server.backup`, `server.restore`, top-level `cli` |
+| `yaml.d/app.yml` | Other project-defined sections |
+
+The merge accepts these sections in any YAML file, but the table is the canonical location. Existing area sections in `server.yml` are honored and automatically migrated on startup. Before moving values, migration creates a `server.yml.bak`; it writes area files atomically and then rewrites `server.yml`. If the configuration directory is read-only, migration is skipped with a warning and the merged settings remain usable.
+
+Only `*.yml` and `*.yaml` regular files are loaded (internal symlinks are allowed). Hidden files, backups, other extensions, and subdirectories are ignored. Files `server.yml`, `secrets.yml`, and every drop-in use mode `0600`; `yaml.d/` uses `0700`. The server corrects modes at startup. A drop-in that remains group/world writable is ignored and logged. The watcher reloads `server.yml`, `yaml.d/`, `secrets.yml`, and `assets/`; invalid individual values fall back to defaults, and an unparseable file keeps its last good copy.
+
+## Secrets and validation
+
+Put credentials only in `secrets.yml`, including database credentials, operator and encryption keys, SMTP passwords, and metrics credentials. The server generates first-run secrets securely. Keep this file private, include it in protected backups, and never commit it. Secret values are never logged. Do not put passwords or tokens in `server.yml` or area files.
+
+Every setting is validated. An invalid value is replaced by its documented default with one warning naming the file, line, and key; configuration errors do not stop startup. A YAML file that cannot be parsed is ignored, retaining its last good copy or built-in defaults. Duplicate scalar keys and explicit `null` values are invalid. Unknown keys in defined sections are warned about and ignored.
+
+YAML comments go above the setting, never inline. For example:
+
+```yaml
+server:
+  # Listen on all supported interfaces.
+  address: "[::]"
+```
+
+Booleans accept case-insensitive true/false forms including `1`/`0`, `yes`/`no`, `on`/`off`, `enable`/`disable`, `y`/`n`, and the additional forms defined in AI.md PART 5. Empty values use the setting default; invalid values warn and use the default.
+
+## Node settings and database
+
+```yaml
+server:
+  address: "[::]"
+  port: 64000
+  fqdn: ""
+  mode: production
+  baseurl: /
+  pidfile: true
+  daemonize: false
+  database:
+    driver: sqlite
+    url: "{data_dir}/db/server.db"
+  cache:
+    driver: memory
+  ssl:
+    enabled: false
+```
+
+The server chooses and persists an available port in the 64000–64999 range when none is configured; application containers default to port 80. `server.address` is the bind address; `server.fqdn` is the public hostname. `server.baseurl` is the URL path prefix, default `/`. Trusted reverse-proxy headers are honored only from trusted peers. Configure additional proxy IPs/CIDRs under `server.trusted_proxies.additional`; do not trust forwarded headers from arbitrary clients.
+
+SQLite is local and creates its database under the data directory. For remote Turso/libsql, configure `server.database.driver: libsql` and the connection URL; put its auth token in `secrets.yml` as `server.database.token`. Cache supports the configured local or remote backend. Database and cache connection environment variables seed first-run configuration only; later changes belong in files.
+
+SSL settings are `server.ssl.enabled`, `server.ssl.cert`, `server.ssl.key`, and the Let's Encrypt settings defined in PART 12. The certificate and key paths refer to operator-managed files. Request limits and response compression are configured in `yaml.d/security.yml` and `yaml.d/web.yml`, respectively. See AI.md PART 12 for complete keys, defaults, proxy trust behavior, and graceful-reload rules.
+
+## Environment and command-line overrides
+
+Directory options are available as flags and environment variables. A flag wins over its environment variable, which wins over the platform default. Directory paths preserve absolute paths; relative paths resolve against the startup working directory. Paths containing control characters or a `..` segment are rejected.
+
+| Environment | Flag | Purpose |
 |---|---|---|
-| `server.address` | `[::]` | Bind address (dual-stack when supported). |
-| `server.port` | Random unused 64xxx port; `80` in an application container | HTTP listener port; the selected default is persisted. |
-| `server.fqdn` | empty | Public host name when configured. |
-| `server.mode` | `production` | Application mode. |
-| `server.update.branch` | `stable` | Release channel: `stable`, `beta`, or `devel` (`daily`, `rolling`, `dev`, and `development` normalize to `devel`). |
-| `server.update.auto_install` | `false` | Whether scheduled update checks may install eligible updates. |
-| `server.update.defer_days` | `0` | Stable/beta release age threshold in days (0–365); devel ignores this setting. |
-| `server.update.cli_min_version` | empty | Minimum CLI version accepted by the server. |
-| `server.tokens.max_linked` | `25` | Maximum active linked tokens per anonymous owner. |
-| `server.tokens.cookie_max_age` | `1y` | Sliding owner-token cookie lifetime. |
-| `server.tokens.idle_purge_days` | `0` | Purge idle owners only when they have no resources; 0 disables purging. |
-| `server.backup.encryption.enabled` | `false` | Indicates whether backup encryption is active; the effective value follows the configured password. |
-| `server.backup.encryption_password` | empty | Encryption password stored in `secrets.yml`, never in `server.yml`. |
-| `server.backup.retention.max_backups` | `1` | Maximum number of retained backups. |
-| `server.backup.retention.keep_weekly` | `0` | Number of weekly backups to retain. |
-| `server.backup.retention.keep_monthly` | `0` | Number of monthly backups to retain. |
-| `server.backup.retention.keep_yearly` | `0` | Number of yearly backups to retain. |
-| `server.backup.retention.max_total_size` | `10%` | Maximum total backup size relative to the filesystem. |
-| `server.restore.max_archive_size` | `1G` | Maximum accepted backup archive size. |
-| `server.restore.max_expanded_size` | `4G` | Maximum expanded backup size. |
-| `server.restore.max_files` | `10000` | Maximum number of files in a backup archive. |
-| `server.restore.max_file_size` | `512M` | Maximum expanded size of one archive member. |
-| `server.restore.max_ratio` | `100` | Maximum archive compression ratio. |
-| `server.compliance.gdpr`, `.ccpa`, `.hipaa`, `.soc2`, `.pci_dss`, `.iso27001`, `.fedramp`, `.lgpd`, `.pipeda`, `.appi`, `.pdpa` | `false` | Enable the named compliance report profile. This does not certify compliance. |
-| `server.privacy.data.sold` | `false` | Select the disclosure and enable the CCPA opt-out controls when the deployment sells or shares personal information. |
-| `server.privacy.data.stored_on_server` | `true` | State whether report and operational data is stored on this server. |
-| `server.privacy.data.retention.period` | Product-specific text | Retention description shown on `/server/privacy`. |
-| `server.privacy.consent.show_until_acknowledged` | `true` | Show the consent banner on HTML pages until the visitor makes a choice. |
-| `server.privacy.consent.message`, `.message_if_sold` | Product-specific text | Banner message selected by `server.privacy.data.sold`. |
-| `server.privacy.consent.policy.text`, `.url`, `.version` | `Privacy Policy`, `/server/privacy`, `1` | Consent policy link and version. |
-| `server.privacy.consent.buttons.decline`, `.accept` | `Decline`, `Allow preferences` | Consent banner button labels. |
-| `server.ssl.cert`, `server.ssl.key` | empty | Paths to an operator-managed TLS certificate and private key. |
-| `server.baseurl` | empty | Optional URL path prefix; trusted proxy headers take precedence. |
-| `server.pidfile` | `true` | Write a process PID file outside application containers. |
-| `server.daemonize` | `false` | Detach manual starts; service-manager starts remain foreground. |
-| `server.trusted_proxies.additional` | empty list | Additional trusted proxy IPs or CIDRs. |
-| `server.trusted_proxies.client_ip_header` | `auto` | Client IP header selection for trusted proxies. |
-| `server.rate_limit.enabled` | `true` | Enable per-client request limits. |
-| `server.rate_limit.requests` | `120` | Requests allowed per client per window. |
-| `server.rate_limit.window_seconds` | `60` | Rate-limit window length. |
-| `server.logging.access_format` | `apache` | Access-log format setting. |
-| `server.logging.level` | `info` | Log verbosity setting. |
-| `server.metrics.enabled` | `true` | Enable internal Prometheus, Grafana, and Loki handlers. |
-| `server.metrics.root.enabled` | `true` | Enable authenticated `/metrics` aliases. |
-| `server.metrics.auth.allow_unauthenticated` | `false` | Skip metrics tokens only on a firewalled internal network. |
-| `server.metrics.include_system` | `true` | Collect CPU, memory, and disk metrics. |
-| `server.metrics.include_runtime` | `true` | Collect Go runtime metrics. |
-| `server.metrics.loki.max_entries` | `1000` | Maximum recent log entries returned by the Loki-compatible endpoint. |
-| `server.metrics.loki.max_age` | `1h` | Maximum age of log entries returned by the Loki-compatible endpoint. |
-| `server.metrics.duration_buckets` | built-in | Optional Prometheus HTTP latency histogram bucket boundaries. |
-| `server.metrics.size_buckets` | built-in | Optional Prometheus HTTP body-size histogram bucket boundaries. |
-| `server.metrics.auth.tokens.{prometheus,grafana,loki}` | generated in `secrets.yml` | Independent credentials for the three metrics endpoints. |
-| `server.geoip.enabled` | `true` | Enable country lookup and configured allow/deny policy when the local database is available. |
-| `server.geoip.deny_countries` | empty list | ISO country codes denied by the GeoIP request filter. |
-| `server.geoip.allow_countries` | empty list | Optional ISO country allow-list; when set, other countries are denied. |
-| `server.geoip.presets` | empty map | Named country-list presets for operator configuration. |
-| `server.tor.binary`, `.expose`, `.use_network` | auto-detected, `false`, `false` | Tor executable override, opt-in onion discovery, and outbound-network policy. A found Tor binary automatically enables the managed hidden service. |
-| `server.tor.max_circuits`, `.startup_timeout`, `.circuit_timeout`, `.bootstrap_timeout` | `32`, `60`, `60`, `180` | Tor circuit and startup timing limits. |
-| `server.tor.safe_logging`, `.max_streams_per_circuit`, `.close_circuit_on_stream_limit` | `true`, `100`, `true` | Tor logging and hidden-service stream limits. |
-| `server.tor.bandwidth_rate`, `.bandwidth_burst`, `.max_monthly_bandwidth`, `.num_intro_points`, `.virtual_port` | `1 MB`, `2 MB`, `100 GB`, `3`, `80` | Tor bandwidth and hidden-service settings. |
-| `server.i2p.enabled` | `false` on hosts; `true` in application containers | Enable an I2P eepsite. Override with `I2P_ENABLED=true|false` or `--i2p[=true|false]`; an explicit flag takes precedence over the environment, which takes precedence over config. |
-| `server.i2p.binary`, `.sam_address`, `.virtual_port` | auto-detected, `127.0.0.1:7656`, `80` | i2pd executable override, external SAM bridge, and eepsite virtual port. |
-| `server.i2p.inbound_length`, `.outbound_length`, `.inbound_quantity`, `.outbound_quantity` | `3`, `3`, `5`, `5` | I2P tunnel length and parallel tunnel counts. |
-| `server.i2p.signature_type`, `.bootstrap_timeout` | `7`, `300` | I2P destination key signature and bootstrap timeout in seconds. |
+| `CONFIG_DIR` | `--config` | Configuration directory |
+| `DATA_DIR` | `--data` | Data directory |
+| `LOG_DIR` | `--log` | Log directory |
+| `DATABASE_DIR` | — | SQLite database directory |
+| `BACKUP_DIR` | `--backup` | Backup directory |
 
-The server automatically manages a dedicated Tor process whenever the Tor executable is available. I2P is opt-in on a host and enabled by default in an application container; the `--i2p` flag or `I2P_ENABLED` environment variable overrides `server.i2p.enabled`. The managed overlay listeners are separate from the clearnet listener. Their addresses appear on `/server/help` and in health status when available.
-| `server.healthz.root.enabled` | `false` | Register the root `/healthz` alias. |
-| `server.scheduler.timezone` | `America/New_York` | IANA timezone for the persistent built-in scheduler. |
-| `server.scheduler.catch_up_window` | `1h` | Maximum age for scheduled work to run after a restart. |
-| `server.notifications.email.smtp.host` | empty | SMTP host; empty enables local relay detection. |
-| `server.notifications.email.smtp.port` | `587` | SMTP port. |
-| `server.notifications.email.smtp.tls` | `auto` | `auto`, `starttls`, `tls`, or `none`. |
-| `server.notifications.email.smtp.username` | empty | SMTP authentication username. |
-| `server.notifications.email.from.name`, `.email` | empty | Sender display name and address. |
-| `server.notifications.email.reply_to` | empty | Reply-To address and default recipient for the SMTP test command. |
-| `server.contact.admin.email` | empty | Internal fallback recipient for report notifications. |
-| `server.contact.security.email` | `security@{fqdn}` when a host is configured | Security report recipient; falls back to the deployment's `security@` address. |
-| `server.contact.abuse.email` | empty | Abuse/DMCA recipient; empty values fall back to `general.email`, then `admin.email`. |
-| `server.contact.general.email` | empty | General report recipient; empty values fall back to `admin.email`. |
-| `server.contact.dpo.email` | empty | Public DPO recipient; empty values fall back to `general.email`, then show only the security link. |
-| `server.contact.{admin,security,abuse,general,dpo}.name` | empty | Optional display name for the corresponding contact role. |
-| `server.scheduler.tasks.{task}.schedule` | built-in | Cron expression or supported descriptor for the named scheduler task. |
-| `server.scheduler.tasks.{task}.enabled` | task-specific | Enable or disable the named task. |
-| `server.scheduler.tasks.{task}.retry_on_fail` | `false` | Retry failed task executions when enabled. |
-| `server.scheduler.tasks.{task}.retry_delay` | task-specific | Delay before a configured task retry. |
-| `web-ui.theme` | `dark` | Default web theme. |
-| `web-ui.logo`, `web-ui.favicon` | empty | Branding asset values. |
-| `web-ui.notifications.enabled` | `true` | Announcement setting. |
-| `web-ui.notifications.announcements` | empty list | Announcement text entries. |
-| `web-robots.allow` | `/`, `/api` | Allowed robots paths. |
-| `web-robots.deny` | `/debug` | Disallowed robots paths. |
-| `web-security.cors` | `*` | CORS allow-origin value. |
+Other filesystem overrides include `--cache`, `--log`, and `--pid`. Listener and URL overrides include `--address`, `--port`, and `--baseurl`. Environment `PORT` and `LISTEN` initialize the first-run port and address; they do not override saved settings on every startup. `DOMAIN` overrides hostname discovery. `MODE` selects `production`, `development`, or `debug`; `DEBUG` independently enables debug behavior. SMTP environment variables are `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM_NAME`, `SMTP_FROM_EMAIL`, and `SMTP_TLS`. See AI.md PART 12 for exact precedence and the full runtime/init-only variable lists.
 
-The configuration decoder rejects unknown YAML keys. Use the exact nested names in this table; secrets such as the operator token, encryption key, SMTP password, and metrics tokens are read from `secrets.yml` rather than `server.yml`.
+## Area configuration
 
-`secrets.yml` stores `server.token`, `server.security.encryption_key`, the SMTP password, and independent metrics credentials; it is generated automatically and must not be added to source control. Metrics tokens are generated individually for Prometheus, Grafana, and Loki. `server.token` is reserved for protected maintenance operations. MCP accepts primary and linked owner tokens; use a separate linked token for each client. SQLite stores anonymous owner-token and scheduler state in `<data_dir>/db/server.db`; quote collections remain embedded in the binary. The CLI accepts `--server`, `QUOTES_SERVER`, or a user configuration file.
+All feature settings and defaults are specified in AI.md. The following examples show the area-file shape; omit settings that should use their defaults.
 
-## Email and reports
+```yaml
+# yaml.d/security.yml
+server:
+  rate_limit:
+    enabled: true
+  tokens:
+    max_linked: 25
+```
 
-SMTP options live below `server.notifications.email.smtp` and accept `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_TLS`, `SMTP_FROM_NAME`, and `SMTP_FROM_EMAIL` environment overrides. Passwords are stored in `secrets.yml`, not `server.yml`. `server.notifications.email.reply_to` supplies the test-email recipient when `--to` is omitted and the Reply-To address for notifications. TLS defaults to `auto`; port 465 uses implicit TLS and other ports use EHLO followed by STARTTLS when offered. Email-dependent features stay disabled when SMTP is unavailable. Default email templates are embedded; operator overrides belong in `{config_dir}/template/email/`.
+```yaml
+# yaml.d/contact.yml
+server:
+  contact:
+    general:
+      email: reports@example.org
+```
 
-Validate and preview every template without sending email with `quotes --maintenance email test --dry-run`. Send a real SMTP test message with `quotes --maintenance email test [--to ADDRESS]`; this requires maintenance authorization and an available SMTP server.
+```yaml
+# yaml.d/notifications.yml
+server:
+  notifications:
+    email:
+      smtp:
+        host: mail.example.org
+        port: 587
+        tls: auto
+```
 
-## Scheduled tasks
+Use `yaml.d/pages.yml` for report page behavior and antispam, `yaml.d/branding.yml` for branding and SEO, `yaml.d/privacy.yml` for privacy and compliance disclosures, `yaml.d/metrics.yml` for metrics, `yaml.d/tor.yml` and `yaml.d/i2p.yml` for overlay networking, and `yaml.d/maintenance.yml` for scheduling, backups, restores, and updates. Contact reports do not create accounts or accept quote contributions. Owner tokens are anonymous credentials; they are not user accounts.
 
-The scheduler is always active and persists task state in SQLite. Configure IANA timezone and catch-up window under `server.scheduler`; individual tasks use `schedule`, `enabled`, `retry_on_fail`, and `retry_delay`. The server does not use cron or an external scheduler. `quotes --maintenance scheduler list|run|enable|disable` is the task-control interface.
+Email behavior, templates, scheduler tasks, GeoIP, metrics endpoints, backup/restore safeguards, and update channels are documented in AI.md PARTS 17–22. Backups include configuration area files and `secrets.yml` when present. Treat backup files as sensitive.
 
-## Storage locations
+## Platform paths and operations
 
-The server creates its directories at startup. On Linux, privileged runs use `/etc/apimgr/quotes`, `/var/lib/apimgr/quotes`, `/var/cache/apimgr/quotes`, and `/var/log/apimgr/quotes`; user runs follow XDG configuration, data, cache, and log locations. macOS uses `~/Library/Application Support/apimgr/quotes`, `~/Library/Caches/apimgr/quotes`, and `~/Library/Logs/apimgr/quotes`. Windows uses `%APPDATA%` for configuration and `%LOCALAPPDATA%` for data, cache, and logs. BSD uses `/usr/local/etc`, `/var/db`, `/var/cache`, and `/var/log`.
+Use the platform configuration, data, cache, log, and backup directories selected by the application. Container deployments use persistent mounts for configuration and data. The exact platform paths and service-manager behavior are defined in AI.md PARTS 4, 8, and 12; do not assume a host path when using a container.
 
-Inside a container, configuration is under `/config/quotes`, data and cache are under `/data/quotes`, logs are under `/data/log/quotes`, and backups are under `/data/backups/quotes`. Mount `/config` and `/data` as persistent volumes.
+The built-in scheduler persists state in the configured database; do not use cron or an external scheduler. Maintenance commands require operator authorization where specified. The server has no web panel for changing configuration: edit the files and let the watcher reload supported settings. Listener address, port, daemonization, and PID-file changes require a restart.
 
-The mode is selected from `--mode`, `MODE`, `server.mode`, then `production`. Supported values are `production`, `development`, and `debug`; `prod`, `dev`, and `devel` are aliases. `--maintenance mode <mode>` persists the server mode after authorization. Debug endpoints require the separate `--debug` flag or a truthy `DEBUG` environment value. The default theme is dark. Theme and language preference cookies are optional and are written only after the visitor accepts the preference-cookie category on that device; preference forms are protected by the `csrf_token` double-submit cookie.
+## Related requirements
 
-Service commands use the detected host service manager: `quotes --service start|stop|restart|reload`, `quotes --service --install`, `quotes --service --disable`, and `quotes --service --uninstall`. Install enables and starts the service; disable stops it and removes it from automatic startup while leaving its service files and data in place. Uninstall requires the operator to type `yes` before removing service files, the managed account, and application directories. A regular user gets a systemd user unit or macOS LaunchAgent; system installations run with a dedicated service account after privileged listener binding. `--update branch <stable|beta|devel>` changes the persisted update channel; `--update check` checks GitHub Releases and `--update yes` verifies the release checksum before replacing the executable.
+- AI.md PART 5: file layout, merge, migration, permissions, environment variables, paths, and boolean parsing.
+- AI.md PART 12: server settings, validation, modes, database/cache, TLS, request limits, and proxy handling.
+- AI.md PART 16: browser behavior, web/security settings, CSRF, and pages.
+- AI.md PARTS 17–22: email, scheduler, GeoIP, metrics, backup/restore, and updates.
+- AI.md PART 28: Docker-backed development and verification workflow.
+- AI.md PART 29: Read the Docs documentation requirements and navigation.

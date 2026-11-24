@@ -23,7 +23,7 @@ On Linux, install the matching server binary with:
 
 ```sh
 arch=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
-curl -LSsf "https://github.com/apimgr/quotes/releases/latest/download/quotes-linux-${arch}" -o quotes
+curl -q -LSsf "https://github.com/apimgr/quotes/releases/latest/download/quotes-linux-${arch}" -o quotes
 chmod +x quotes
 ./quotes --port 8080
 ```
@@ -57,7 +57,7 @@ The CLI supports `random [--category CATEGORY]`, `categories`, `quote ID`, and `
 
 ## Web and API
 
-Open `http://localhost:8080/` to filter and browse quotes. REST uses `/api/v1/`; GraphQL is at `POST /api/v1/server/graphql`; OpenAPI JSON is at `/api/v1/server/swagger`. Browser API references are at `/server/docs/swagger` and `/server/docs/graphql`. The MCP Streamable HTTP endpoint is `/api/v1/server/mcp` and requires an owner-linked Bearer token. Create tokens at `/server/preferences/tokens`; the operator token in `secrets.yml` is not an MCP credential.
+Open `http://localhost:8080/` to filter and browse quotes after starting the server with `quotes --port 8080`. REST uses `/api/v1/`; GraphQL is at `POST /api/v1/server/graphql`; OpenAPI JSON is at `/api/v1/server/swagger`. Browser API references are at `/server/docs/swagger` and `/server/docs/graphql`. The MCP Streamable HTTP endpoint is `/api/v1/server/mcp` and requires an owner-linked Bearer token. Create tokens at `/server/preferences/tokens`; the operator token in `secrets.yml` is not an MCP credential.
 
 See the [API documentation](docs/api.md), [configuration reference](docs/configuration.md), and [integration guide](docs/integrations.md).
 

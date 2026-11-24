@@ -20,7 +20,7 @@ The default configuration path is `~/.config/apimgr/quotes/cli.yml` on Unix and 
 
 ```yaml
 server:
-  primary: https://quotes.example
+  primary: https://YOUR_SERVER
 auth:
   token: ""
 ```

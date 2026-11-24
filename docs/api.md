@@ -54,9 +54,9 @@ Metrics services are `prometheus`, `grafana`, and `loki`. `/server/metrics` is t
 ## Examples
 
 ```sh
-curl 'http://localhost:8080/api/v1/quotes/random?category=programming'
-curl 'http://localhost:8080/api/v1/quotes?author=Grace%20Hopper&page=1&limit=20'
-curl http://localhost:8080/api/v1/server/swagger
+curl -q -LSsf 'http://localhost:8080/api/v1/quotes/random?category=programming'
+curl -q -LSsf 'http://localhost:8080/api/v1/quotes?author=Grace%20Hopper&page=1&limit=20'
+curl -q -LSsf http://localhost:8080/api/v1/server/swagger
 ```
 
 GraphQL supports `quote(id)`, `randomQuote(category)`, `quotes(category, author, page, limit)`, and `categories`. Send JSON with a `query` field to either GraphQL route. MCP uses JSON-RPC over POST and requires an owner or linked Bearer token. Create a separate linked token for each MCP client; the operator token is not accepted for MCP. Its tools are `quotes_list`, `quotes_random`, `quote_get`, and `categories_list`; use `tools/list` before `tools/call`.

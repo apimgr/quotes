@@ -6,7 +6,15 @@ Build from the repository with `docker build -f docker/Dockerfile -t quotes .`, 
 
 ## Binary
 
-Download the server binary for your OS and architecture from the project release. Run `./quotes --port 8080`. The companion client is distributed as `quotes-cli` and requires an explicit server URL unless `site.txt` or a supported environment setting provides one.
+Download the server binary for your OS and architecture from the [GitHub releases page](https://github.com/apimgr/quotes/releases/latest). For example, download the Linux amd64 build with:
+
+```sh
+curl -q -LSsf -o quotes https://github.com/apimgr/quotes/releases/latest/download/quotes-linux-amd64
+chmod +x quotes
+./quotes --port 8080
+```
+
+The companion client is distributed as `quotes-cli` and requires an explicit server URL unless `site.txt` or a supported environment setting provides one.
 
 ## From source
 
