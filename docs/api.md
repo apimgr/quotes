@@ -22,6 +22,9 @@ Quote reads are public and read-only. MCP and owner-token management require the
 | GET | `/api/v1/server/security` | Security contact information |
 | GET | `/api/v1/server/security/policy` | Vulnerability disclosure policy |
 | GET | `/api/v1/server/security/thanks` | Security acknowledgments |
+| GET | `/api/v1/server/metrics[/{service}]` | Internal metrics; each service requires its own Bearer token. |
+| GET | `/api/metrics[/{service}]` | Unversioned internal metrics aliases. |
+| GET | `/metrics[/{service}]` | Root internal aliases when `server.metrics.root.enabled` is true. |
 | GET, POST | `/api/v1/server/contact` | Contact report form definition and validated report submission |
 | GET | `/api/v1/server/preferences/tokens` | List masked owner and linked token metadata (primary credential required) |
 | POST | `/api/v1/server/preferences/tokens/primary` | Issue a primary owner token |
@@ -43,6 +46,8 @@ Quote reads are public and read-only. MCP and owner-token management require the
 | GET | `/api/healthz` | Health compatibility route |
 
 Lists default to 250 items and allow up to 1000. Invalid categories, IDs, and pagination values return an error. The server applies configured per-client rate limits and request-size limits. `Accept: text/plain` on quote JSON routes requests text output.
+
+Metrics services are `prometheus`, `grafana`, and `loki`. `/server/metrics` is the Prometheus exposition handler; `/server/metrics/grafana` returns the importable dashboard and `/server/metrics/loki` returns bounded recent log streams. Their generated bearer tokens are stored separately under `server.metrics.auth.tokens` in `secrets.yml`. Query-string credentials are not accepted. Keep these internal endpoints behind network firewall rules and do not proxy them publicly.
 
 ## Examples
 

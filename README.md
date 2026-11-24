@@ -53,7 +53,7 @@ quotes-cli --server http://localhost:8080 categories
 quotes-cli --server http://localhost:8080 quote 42
 ```
 
-The CLI accepts `--server URL`, `QUOTES_SERVER`, or its user config. It supports `random`, `categories`, and `quote ID`; `--output` accepts `plain` or `json`. `--lang` supports English, Spanish, French, Arabic, German, and Italian.
+The CLI supports `random [--category CATEGORY]`, `categories`, `quote ID`, and `list` with category, author, and pagination filters; `--output` accepts `plain` or `json`. Set the server with `--server URL`, `QUOTES_SERVER_PRIMARY`, or `server.primary` in `~/.config/apimgr/quotes/cli.yml` (Windows: `%APPDATA%\apimgr\quotes\cli.yml`). Quotes has no compiled default server. `--lang` supports English, Spanish, French, Arabic, German, and Italian. See the [CLI guide](docs/cli.md) for config profiles and token options.
 
 ## Web and API
 

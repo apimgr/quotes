@@ -120,6 +120,15 @@ Project-defined quote routes are public and read-only. Template-defined pages an
 | GET | `/api/v1/server/security` | None | Security reporting channels. |
 | GET | `/api/v1/server/security/policy` | None | Disclosure policy. |
 | GET | `/api/v1/server/security/thanks` | None | Security acknowledgments. |
+| GET | `/server/metrics`, `/server/metrics/prometheus` | Prometheus metrics token | Internal Prometheus exposition. |
+| GET | `/server/metrics/grafana` | Grafana metrics token | Internal Grafana dashboard JSON. |
+| GET | `/server/metrics/loki` | Loki metrics token | Internal recent structured log streams. |
+| GET | `/api/v1/server/metrics`, `/api/v1/server/metrics/prometheus`, `/api/metrics`, `/api/metrics/prometheus` | Prometheus metrics token | Internal Prometheus aliases. |
+| GET | `/api/v1/server/metrics/grafana`, `/api/metrics/grafana` | Grafana metrics token | Internal Grafana dashboard aliases. |
+| GET | `/api/v1/server/metrics/loki`, `/api/metrics/loki` | Loki metrics token | Internal Loki stream aliases. |
+| GET | `/metrics`, `/metrics/prometheus` | Prometheus metrics token | Optional internal root aliases when enabled. |
+| GET | `/metrics/grafana` | Grafana metrics token | Optional internal root alias when enabled. |
+| GET | `/metrics/loki` | Loki metrics token | Optional internal root alias when enabled. |
 | GET, POST | `/api/v1/server/contact` | None | Report-form description and validated report submission. |
 | GET | `/server/security/report/{tracking_id}` | Report status token | Read the status, maintainer comment, and disclosure date for a submitted security report. |
 
