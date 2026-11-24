@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/apimgr/quotes/actions/workflows/ci.yml/badge.svg)](https://github.com/apimgr/quotes/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/apimgr/quotes)](https://github.com/apimgr/quotes/releases) [![License](https://img.shields.io/github/license/apimgr/quotes)](LICENSE.md) [![Documentation](https://readthedocs.org/projects/apimgr-quotes/badge/?version=latest)](https://apimgr-quotes.readthedocs.io/)
 
-Quotes serves five embedded quote collections through a public read-only web interface, REST API, GraphQL endpoint, and CLI. Collection data ships in the executable; no accounts or quote submissions are supported.
+Quotes serves five embedded quote collections through a public read-only web interface, REST API, GraphQL endpoint, and CLI. Collection data ships in the executable; there are no user accounts or community quote submissions. Anonymous owner credentials and a report-only contact flow provide the additional security and privacy surfaces required by AI.md.
 
 ## Install
 
@@ -57,7 +57,7 @@ The CLI accepts `--server URL`, `QUOTES_SERVER`, or its user config. It supports
 
 ## Web and API
 
-Open `http://localhost:8080/` to filter and browse quotes. REST uses `/api/v1/`; GraphQL is at `POST /api/v1/server/graphql`; OpenAPI JSON is at `/api/v1/server/swagger`. Browser API references are at `/server/docs/swagger` and `/server/docs/graphql`. The MCP Streamable HTTP endpoint is `/api/v1/server/mcp` and requires the operator Bearer token stored in `secrets.yml`.
+Open `http://localhost:8080/` to filter and browse quotes. REST uses `/api/v1/`; GraphQL is at `POST /api/v1/server/graphql`; OpenAPI JSON is at `/api/v1/server/swagger`. Browser API references are at `/server/docs/swagger` and `/server/docs/graphql`. The MCP Streamable HTTP endpoint is `/api/v1/server/mcp` and requires an owner-linked Bearer token. Create tokens at `/server/preferences/tokens`; the operator token in `secrets.yml` is not an MCP credential.
 
 See the [API documentation](docs/api.md), [configuration reference](docs/configuration.md), and [integration guide](docs/integrations.md).
 

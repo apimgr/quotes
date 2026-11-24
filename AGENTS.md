@@ -10,7 +10,7 @@ Role: Efficient loader for AI.md
 - Read relevant `.claude/rules/*.md` before changing matching code.
 
 ## Project rules
-- This is a public, read-only quote API with no accounts, submissions, or operator web panel.
+- This is a public, read-only quote API with no user accounts, quote submissions, or operator web panel. Implement the report-contact and anonymous owner-token surfaces required by AI.md; neither permits community quote contributions or creates user accounts.
 - Preserve the rights and provenance boundary for bundled quote content. Do not import datasets without clear redistribution permission.
 - Keep API, GraphQL, browser, CLI, and documentation behavior aligned.
 - Use Docker-backed Makefile targets for Go development and leave validation to the primary session.

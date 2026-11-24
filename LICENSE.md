@@ -26,11 +26,16 @@ The following dependencies retain their respective licenses:
 
 | Dependency | License |
 |---|---|
+| [github.com/chromedp/cdproto](https://github.com/chromedp/cdproto) | MIT |
+| [github.com/chromedp/chromedp](https://github.com/chromedp/chromedp) | MIT |
 | [github.com/graphql-go/graphql](https://github.com/graphql-go/graphql) | MIT |
 | [github.com/spf13/cobra](https://github.com/spf13/cobra) | Apache-2.0 |
 | [github.com/spf13/pflag](https://github.com/spf13/pflag) | BSD-3-Clause |
 | [github.com/inconshreveable/mousetrap](https://github.com/inconshreveable/mousetrap) | Apache-2.0 |
 | [golang.org/x/crypto](https://go.googlesource.com/crypto) | BSD-3-Clause |
 | [golang.org/x/net](https://go.googlesource.com/net) | BSD-3-Clause |
+| [golang.org/x/sys](https://go.googlesource.com/sys) | BSD-3-Clause |
+| [golang.org/x/term](https://go.googlesource.com/term) | BSD-3-Clause |
 | [golang.org/x/text](https://go.googlesource.com/text) | BSD-3-Clause |
 | [gopkg.in/yaml.v3](https://github.com/go-yaml/yaml) | MIT OR Apache-2.0 |
+| [modernc.org/sqlite](https://gitlab.com/cznic/sqlite) | BSD-3-Clause |

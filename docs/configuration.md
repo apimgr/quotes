@@ -10,6 +10,7 @@ The server reads `server.yml`; use `--config` to select a file and `--address` o
 | `server.port` | `8080` at runtime | HTTP listener port. |
 | `server.fqdn` | empty | Public host name when configured. |
 | `server.mode` | `production` | Application mode. |
+| `server.update.branch` | `stable` | Release channel: `stable`, `beta`, or `devel` (`daily`, `rolling`, `dev`, and `development` normalize to `devel`). |
 | `server.rate_limit.enabled` | `true` | Enable per-client request limits. |
 | `server.rate_limit.requests` | `120` | Requests allowed per client per window. |
 | `server.rate_limit.window_seconds` | `60` | Rate-limit window length. |
@@ -25,7 +26,7 @@ The server reads `server.yml`; use `--config` to select a file and `--address` o
 | `web-robots.deny` | `/debug` | Disallowed robots paths. |
 | `web-security.cors` | `*` | CORS allow-origin value. |
 
-`secrets.yml` stores `server.token` and `server.security.encryption_key`; it is generated automatically and must not be added to source control. `server.token` is required for MCP requests. The CLI accepts `--server`, `QUOTES_SERVER`, or a user configuration file. Quote content is embedded in the binary; there is no runtime database.
+`secrets.yml` stores `server.token` and `server.security.encryption_key`; it is generated automatically and must not be added to source control. `server.token` is required for MCP requests and protected maintenance operations. SQLite stores anonymous owner-token state in `<data_dir>/db/server.db`; quote collections remain embedded in the binary. The CLI accepts `--server`, `QUOTES_SERVER`, or a user configuration file.
 
 ## Storage locations
 
@@ -33,4 +34,6 @@ The server creates its directories at startup. On Linux, privileged runs use `/e
 
 Inside a container, configuration is under `/config/quotes`, data and cache are under `/data/quotes`, logs are under `/data/log/quotes`, and backups are under `/data/backups/quotes`. Mount `/config` and `/data` as persistent volumes.
 
-The mode is selected from `--mode`, `MODE`, `server.mode`, then `production`. Supported values are `production`, `development`, and `debug`; `prod`, `dev`, and `devel` are aliases. Debug endpoints require the separate `--debug` flag or a truthy `DEBUG` environment value. The default theme is dark; selecting a theme submits a same-origin form protected by the `csrf_token` double-submit cookie.
+The mode is selected from `--mode`, `MODE`, `server.mode`, then `production`. Supported values are `production`, `development`, and `debug`; `prod`, `dev`, and `devel` are aliases. `--maintenance mode <mode>` persists the server mode after authorization. Debug endpoints require the separate `--debug` flag or a truthy `DEBUG` environment value. The default theme is dark; selecting a theme submits a same-origin form protected by the `csrf_token` double-submit cookie.
+
+Service commands use the detected host service manager: `quotes --service start|stop|restart|reload`, `quotes --service --install`, `quotes --service --disable`, and `quotes --service --uninstall`. Install enables and starts the service; disable stops it and removes it from automatic startup while leaving its service files and data in place. Uninstall requires the operator to type `yes` before removing service files, the managed account, and application directories. A regular user gets a systemd user unit or macOS LaunchAgent; system installations run with a dedicated service account after privileged listener binding. `--update branch <stable|beta|devel>` changes the persisted update channel; `--update check` checks GitHub Releases and `--update yes` verifies the release checksum before replacing the executable.

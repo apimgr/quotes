@@ -1,6 +1,6 @@
 # Security
 
-Quotes is a public, read-only quote service with no user accounts or quote submissions. The MCP route requires the operator Bearer token; other quote reads are public. Incoming query parameters are validated, request paths and bodies are bounded, lists are paginated, and per-client rate limits are enabled by default. CORS is open because the data is public.
+Quotes is a public, read-only quote service with no user accounts or community quote submissions. MCP requires an owner-linked Bearer token; public quote reads remain unauthenticated. Anonymous owners have no profile, password, or login. Their primary token can manage revocable linked tokens, and API routes accept Bearer credentials rather than browser cookies. Contact reports are validated, rate-limited, encrypted at rest, and handled separately from the quote catalog. Incoming query parameters are validated, request paths and bodies are bounded, and lists are paginated. CORS is open for public quote data.
 
 The rate limiter uses the direct remote address and does not trust caller-supplied forwarding headers. Responses include content-type sniffing, framing, referrer, content-security, and permissions policy headers. `/server/healthz` negotiates HTML, plain text, or JSON using `Accept`; `/api/v1/server/healthz` and `/api/healthz` return JSON. `/.well-known/security.txt` and `/security.txt` publish the project security contact route.
 

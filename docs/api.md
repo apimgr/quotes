@@ -1,6 +1,6 @@
 # API
 
-All API routes are public and read-only. REST success responses use `{ "ok": true, "data": ... }`; list responses also include `pagination` (`page`, `limit`, `total`, `pages`). Errors use `{ "ok": false, "error": "CODE", "message": "..." }`. CORS allows public cross-origin access.
+Quote reads are public and read-only. MCP and owner-token management require the credentials described below. REST success responses use `{ "ok": true, "data": ... }`; list responses also include `pagination` (`page`, `limit`, `total`, `pages`). Errors use `{ "ok": false, "error": "CODE", "message": "..." }`. CORS allows public cross-origin quote access.
 
 ## REST routes
 
@@ -20,11 +20,21 @@ All API routes are public and read-only. REST success responses use `{ "ok": tru
 | GET | `/api/v1/server/help/mcp` | MCP connection details and tools |
 | GET | `/api/v1/server/dpo` | Data-protection contact details |
 | GET | `/api/v1/server/security` | Security contact information |
+| GET | `/api/v1/server/security/policy` | Vulnerability disclosure policy |
+| GET | `/api/v1/server/security/thanks` | Security acknowledgments |
+| GET, POST | `/api/v1/server/contact` | Contact report form definition and validated report submission |
+| GET | `/api/v1/server/preferences/tokens` | List masked owner and linked token metadata (primary credential required) |
+| POST | `/api/v1/server/preferences/tokens/primary` | Issue a primary owner token |
+| POST | `/api/v1/server/preferences/tokens/primary/{reveal,rotate}` | Reveal or rotate the primary token |
+| DELETE | `/api/v1/server/preferences/tokens/primary` | Revoke the primary token and its owner |
+| POST | `/api/v1/server/preferences/tokens` | Create a linked token |
+| POST | `/api/v1/server/preferences/tokens/{id}/{reveal,rotate}` | Reveal or rotate a linked token |
+| PATCH, DELETE | `/api/v1/server/preferences/tokens/{id}` | Update or revoke a linked token |
 | GET | `/api/v1/server/preferences` | Read the browser's theme and language preferences |
 | POST | `/api/v1/server/preferences` | Apply valid theme or language preferences as browser cookies |
 | GET | `/api/v1/server/preferences/sync` | Export preferences as a URL and base64url code |
 | GET | `/api/v1/server/preferences/sync/import` | Import allowed preferences from direct parameters or a code |
-| POST | `/api/v1/server/mcp` | Bearer-authenticated MCP Streamable HTTP endpoint |
+| POST | `/api/v1/server/mcp` | MCP Streamable HTTP endpoint; owner or linked Bearer token required |
 | POST | `/api/mcp`, `/mcp` | Direct MCP aliases |
 | GET | `/api/v1/server/swagger` | OpenAPI document |
 | GET | `/api/swagger` | OpenAPI compatibility alias |
@@ -42,8 +52,8 @@ curl 'http://localhost:8080/api/v1/quotes?author=Grace%20Hopper&page=1&limit=20'
 curl http://localhost:8080/api/v1/server/swagger
 ```
 
-GraphQL supports `quote(id)`, `randomQuote(category)`, `quotes(category, author, page, limit)`, and `categories`. Send JSON with a `query` field to either GraphQL route. MCP uses JSON-RPC over POST and requires the operator Bearer token from the protected `secrets.yml` file. Its tools are `quotes_list`, `quotes_random`, `quote_get`, and `categories_list`; use `tools/list` before `tools/call`.
+GraphQL supports `quote(id)`, `randomQuote(category)`, `quotes(category, author, page, limit)`, and `categories`. Send JSON with a `query` field to either GraphQL route. MCP uses JSON-RPC over POST and requires an owner or linked Bearer token. Create a separate linked token for each MCP client; the operator token is not accepted for MCP. Its tools are `quotes_list`, `quotes_random`, `quote_get`, and `categories_list`; use `tools/list` before `tools/call`.
 
 ## Browser pages
 
-The server-rendered catalog at `/` supports category and author filters and pagination. The dark, light, or automatic theme is stored in the `theme` cookie after a preference form submission. `/server/preferences` changes the theme, and `/server/preferences/sync` exports or imports the browser preference link/code. `/random` selects a random quote and `/quotes/{id}` shows a quote by ID. Standard pages include `/server/about`, `/server/help`, `/server/help/mcp`, `/server/healthz`, `/server/privacy`, `/server/terms`, `/server/dpo`, `/server/security`, `/server/security/policy`, and `/server/security/thanks`. Interactive references are at `/server/docs/swagger` and `/server/docs/graphql`.
+The server-rendered catalog at `/` supports category and author filters and pagination. `/server/preferences` changes appearance and language; `/server/preferences/sync` exports or imports browser preferences. `/server/preferences/tokens` issues, restores, and manages anonymous owner credentials without accounts. `/random` selects a random quote and `/quotes/{id}` shows a quote by ID. Standard pages include `/server/about`, `/server/help`, `/server/help/mcp`, `/server/healthz`, `/server/privacy`, `/server/terms`, `/server/dpo`, `/server/security`, `/server/security/policy`, `/server/security/thanks`, and `/server/contact`. The contact form accepts only abuse, DMCA, privacy, and security reports and is reached through the security page or security.txt. Interactive references are at `/server/docs/swagger` and `/server/docs/graphql`.
