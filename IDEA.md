@@ -121,5 +121,6 @@ Project-defined quote routes are public and read-only. Template-defined pages an
 | GET | `/api/v1/server/security/policy` | None | Disclosure policy. |
 | GET | `/api/v1/server/security/thanks` | None | Security acknowledgments. |
 | GET, POST | `/api/v1/server/contact` | None | Report-form description and validated report submission. |
+| GET | `/server/security/report/{tracking_id}` | Report status token | Read the status, maintainer comment, and disclosure date for a submitted security report. |
 
 The browser surface includes `/`, `/random`, `/quotes/{id}`, `/server/about`, `/server/privacy`, `/server/contact`, `/server/help`, `/server/help/mcp`, `/server/terms`, `/server/dpo`, `/server/security`, `/server/healthz`, `/server/preferences`, `/server/preferences/sync`, `/server/preferences/tokens`, `/server/docs/swagger`, and `/server/docs/graphql`. Optional pages disabled by configuration are not registered and return 404.

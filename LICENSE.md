@@ -39,3 +39,7 @@ The following dependencies retain their respective licenses:
 | [golang.org/x/text](https://go.googlesource.com/text) | BSD-3-Clause |
 | [gopkg.in/yaml.v3](https://github.com/go-yaml/yaml) | MIT OR Apache-2.0 |
 | [modernc.org/sqlite](https://gitlab.com/cznic/sqlite) | BSD-3-Clause |
+| [sapics/ip-location-db](https://github.com/sapics/ip-location-db) ASN data (`iptoasn-asn`), Country data (`iptoasn-country`) | PDDL |
+| [DB-IP](https://db-ip.com/) City data (`dbip-city`) | CC BY 4.0 |
+
+The DB-IP City database requires attribution. The public About page displays the required notice: <a href="https://db-ip.com/">IP Geolocation by DB-IP</a>.
