@@ -61,6 +61,8 @@ Open `http://localhost:8080/` to filter and browse quotes. REST uses `/api/v1/`;
 
 See the [API documentation](docs/api.md), [configuration reference](docs/configuration.md), and [integration guide](docs/integrations.md).
 
+The server automatically hosts a Tor onion service when Tor is installed. I2P is enabled by default in application containers and can be enabled on a host with `--i2p` or `I2P_ENABLED=true`. Available overlay addresses appear on `/server/help` and `/server/healthz`.
+
 ## Development
 
 Go development uses Docker-backed Makefile targets: `make dev`, `make local`, `make build`, `make test`, `make release`, and `make docker`. The release build targets all eight OS/architecture pairs listed above. See [development documentation](docs/development.md).

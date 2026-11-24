@@ -34,18 +34,20 @@ Quote reads are public and read-only. MCP and owner-token management require the
 | POST | `/api/v1/server/preferences/tokens/{id}/{reveal,rotate}` | Reveal or rotate a linked token |
 | PATCH, DELETE | `/api/v1/server/preferences/tokens/{id}` | Update or revoke a linked token |
 | GET | `/api/v1/server/preferences` | Read the browser's theme and language preferences |
-| POST | `/api/v1/server/preferences` | Apply valid theme or language preferences as browser cookies |
+| POST | `/api/v1/server/preferences` | Apply valid theme or language preferences only after this device accepts preference cookies; otherwise return `consent_required` and list the values as ignored |
 | GET | `/api/v1/server/preferences/sync` | Export preferences as a URL and base64url code |
 | GET | `/api/v1/server/preferences/sync/import` | Import allowed preferences from direct parameters or a code |
 | POST | `/api/v1/server/mcp` | MCP Streamable HTTP endpoint; owner or linked Bearer token required |
 | POST | `/api/mcp`, `/mcp` | Direct MCP aliases |
 | GET | `/api/v1/server/swagger` | OpenAPI document |
 | GET | `/api/swagger` | OpenAPI compatibility alias |
+| GET | `/api/v1/server/graphql` | GraphQL endpoint description and query example |
 | POST | `/api/v1/server/graphql` | GraphQL query endpoint |
 | POST | `/api/graphql` | GraphQL compatibility alias |
 | GET | `/api/healthz` | Health compatibility route |
+| GET | `/api/v1/server/security/report/{tracking_id}?token=...` | Read an authorized security-report status; responses are not cacheable |
 
-Lists default to 250 items and allow up to 1000. Invalid categories, IDs, and pagination values return an error. The server applies configured per-client rate limits and request-size limits. `Accept: text/plain` on quote JSON routes requests text output.
+Lists default to 250 items and allow up to 1000. Invalid categories, IDs, and pagination values return an error. The server applies configured per-client rate limits and request-size limits. API routes return JSON to browser and API clients; `Accept: text/plain` requests readable text output across JSON endpoints. The health API also has an explicit `.txt` endpoint.
 
 Metrics services are `prometheus`, `grafana`, and `loki`. `/server/metrics` is the Prometheus exposition handler; `/server/metrics/grafana` returns the importable dashboard and `/server/metrics/loki` returns bounded recent log streams. Their generated bearer tokens are stored separately under `server.metrics.auth.tokens` in `secrets.yml`. Query-string credentials are not accepted. Keep these internal endpoints behind network firewall rules and do not proxy them publicly.
 
@@ -61,4 +63,6 @@ GraphQL supports `quote(id)`, `randomQuote(category)`, `quotes(category, author,
 
 ## Browser pages
 
-The server-rendered catalog at `/` supports category and author filters and pagination. `/server/preferences` changes appearance and language; `/server/preferences/sync` exports or imports browser preferences. `/server/preferences/tokens` issues, restores, and manages anonymous owner credentials without accounts. `/random` selects a random quote and `/quotes/{id}` shows a quote by ID. Standard pages include `/server/about`, `/server/help`, `/server/help/mcp`, `/server/healthz`, `/server/privacy`, `/server/terms`, `/server/dpo`, `/server/security`, `/server/security/policy`, `/server/security/thanks`, and `/server/contact`. The contact form accepts only abuse, DMCA, privacy, and security reports and is reached through the security page or security.txt. Interactive references are at `/server/docs/swagger` and `/server/docs/graphql`.
+The server-rendered catalog at `/` supports category and author filters and pagination. `/server/preferences` changes appearance and language; `/server/preferences/sync` exports or imports browser preferences. Theme and language cookies are stored only after the visitor accepts the preference-cookie category on that device; a save or import does not count as consent. When `server.privacy.data.sold` is enabled, `/server/privacy` and `/server/preferences` show the CCPA opt-out and `POST /server/ccpa` saves the device choice. `/server/preferences/tokens` issues, restores, and manages anonymous owner credentials without accounts. `/random` selects a random quote and `/quotes/{id}` shows a quote by ID. Standard pages include `/server/about`, `/server/help`, `/server/help/mcp`, `/server/healthz`, `/server/privacy`, `/server/terms`, `/server/dpo`, `/server/security`, `/server/security/policy`, `/server/security/thanks`, and `/server/contact`. The contact form accepts only abuse, DMCA, privacy, and security reports and is reached through the security page or security.txt. Interactive references are at `/server/docs/swagger` and `/server/docs/graphql`.
+
+Frontend routes return HTML for browser requests. `Accept: text/html` selects HTML, `Accept: text/plain` returns a readable text rendering, and `Accept: application/json` returns the paired API representation where one exists. HTTP tools such as curl receive readable text when they omit an explicit browser format. Text browsers such as Lynx and w3m receive server-rendered HTML with executable scripts removed. The preference and reporting pages remain standard server-rendered forms.

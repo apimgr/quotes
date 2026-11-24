@@ -2,6 +2,8 @@
 
 The server reads `{config_dir}/server.yml`; `--config` selects the configuration directory. `--data`, `--cache`, `--log`, `--backup`, and `--pid` override filesystem locations. `--address`, `--port`, and `--baseurl` override bind and URL-prefix settings. Directory overrides preserve absolute paths, resolve relative paths against the startup working directory, and reject control characters and `..` segments. When the configuration file is absent, the server writes defaults, including an unused 64xxx port (port 80 in an application container). It also creates a neighboring `secrets.yml` with an operator token and encryption key, using owner-only file permissions. Keep that file private and back it up securely. Never commit it.
 
+Configuration is merged in this order: built-in defaults, `server.yml`, sorted `yaml.d/*.yml` and `yaml.d/*.yaml` drop-ins, then `secrets.yml`. The drop-in directory is private (`0700`) and each configuration file is private (`0600`). Hidden files, backups, and non-YAML files are ignored. Use area files such as `yaml.d/security.yml`, `yaml.d/contact.yml`, `yaml.d/privacy.yml`, and `yaml.d/branding.yml` to keep settings grouped by purpose.
+
 ## Server settings
 
 | Setting | Default | Purpose |
@@ -30,6 +32,13 @@ The server reads `{config_dir}/server.yml`; `--config` selects the configuration
 | `server.restore.max_file_size` | `512M` | Maximum expanded size of one archive member. |
 | `server.restore.max_ratio` | `100` | Maximum archive compression ratio. |
 | `server.compliance.gdpr`, `.ccpa`, `.hipaa`, `.soc2`, `.pci_dss`, `.iso27001`, `.fedramp`, `.lgpd`, `.pipeda`, `.appi`, `.pdpa` | `false` | Enable the named compliance report profile. This does not certify compliance. |
+| `server.privacy.data.sold` | `false` | Select the disclosure and enable the CCPA opt-out controls when the deployment sells or shares personal information. |
+| `server.privacy.data.stored_on_server` | `true` | State whether report and operational data is stored on this server. |
+| `server.privacy.data.retention.period` | Product-specific text | Retention description shown on `/server/privacy`. |
+| `server.privacy.consent.show_until_acknowledged` | `true` | Show the consent banner on HTML pages until the visitor makes a choice. |
+| `server.privacy.consent.message`, `.message_if_sold` | Product-specific text | Banner message selected by `server.privacy.data.sold`. |
+| `server.privacy.consent.policy.text`, `.url`, `.version` | `Privacy Policy`, `/server/privacy`, `1` | Consent policy link and version. |
+| `server.privacy.consent.buttons.decline`, `.accept` | `Decline`, `Allow preferences` | Consent banner button labels. |
 | `server.ssl.cert`, `server.ssl.key` | empty | Paths to an operator-managed TLS certificate and private key. |
 | `server.baseurl` | empty | Optional URL path prefix; trusted proxy headers take precedence. |
 | `server.pidfile` | `true` | Write a process PID file outside application containers. |
@@ -55,6 +64,16 @@ The server reads `{config_dir}/server.yml`; `--config` selects the configuration
 | `server.geoip.deny_countries` | empty list | ISO country codes denied by the GeoIP request filter. |
 | `server.geoip.allow_countries` | empty list | Optional ISO country allow-list; when set, other countries are denied. |
 | `server.geoip.presets` | empty map | Named country-list presets for operator configuration. |
+| `server.tor.binary`, `.expose`, `.use_network` | auto-detected, `false`, `false` | Tor executable override, opt-in onion discovery, and outbound-network policy. A found Tor binary automatically enables the managed hidden service. |
+| `server.tor.max_circuits`, `.startup_timeout`, `.circuit_timeout`, `.bootstrap_timeout` | `32`, `60`, `60`, `180` | Tor circuit and startup timing limits. |
+| `server.tor.safe_logging`, `.max_streams_per_circuit`, `.close_circuit_on_stream_limit` | `true`, `100`, `true` | Tor logging and hidden-service stream limits. |
+| `server.tor.bandwidth_rate`, `.bandwidth_burst`, `.max_monthly_bandwidth`, `.num_intro_points`, `.virtual_port` | `1 MB`, `2 MB`, `100 GB`, `3`, `80` | Tor bandwidth and hidden-service settings. |
+| `server.i2p.enabled` | `false` on hosts; `true` in application containers | Enable an I2P eepsite. Override with `I2P_ENABLED=true|false` or `--i2p[=true|false]`; an explicit flag takes precedence over the environment, which takes precedence over config. |
+| `server.i2p.binary`, `.sam_address`, `.virtual_port` | auto-detected, `127.0.0.1:7656`, `80` | i2pd executable override, external SAM bridge, and eepsite virtual port. |
+| `server.i2p.inbound_length`, `.outbound_length`, `.inbound_quantity`, `.outbound_quantity` | `3`, `3`, `5`, `5` | I2P tunnel length and parallel tunnel counts. |
+| `server.i2p.signature_type`, `.bootstrap_timeout` | `7`, `300` | I2P destination key signature and bootstrap timeout in seconds. |
+
+The server automatically manages a dedicated Tor process whenever the Tor executable is available. I2P is opt-in on a host and enabled by default in an application container; the `--i2p` flag or `I2P_ENABLED` environment variable overrides `server.i2p.enabled`. The managed overlay listeners are separate from the clearnet listener. Their addresses appear on `/server/help` and in health status when available.
 | `server.healthz.root.enabled` | `false` | Register the root `/healthz` alias. |
 | `server.scheduler.timezone` | `America/New_York` | IANA timezone for the persistent built-in scheduler. |
 | `server.scheduler.catch_up_window` | `1h` | Maximum age for scheduled work to run after a restart. |
@@ -102,6 +121,6 @@ The server creates its directories at startup. On Linux, privileged runs use `/e
 
 Inside a container, configuration is under `/config/quotes`, data and cache are under `/data/quotes`, logs are under `/data/log/quotes`, and backups are under `/data/backups/quotes`. Mount `/config` and `/data` as persistent volumes.
 
-The mode is selected from `--mode`, `MODE`, `server.mode`, then `production`. Supported values are `production`, `development`, and `debug`; `prod`, `dev`, and `devel` are aliases. `--maintenance mode <mode>` persists the server mode after authorization. Debug endpoints require the separate `--debug` flag or a truthy `DEBUG` environment value. The default theme is dark; selecting a theme submits a same-origin form protected by the `csrf_token` double-submit cookie.
+The mode is selected from `--mode`, `MODE`, `server.mode`, then `production`. Supported values are `production`, `development`, and `debug`; `prod`, `dev`, and `devel` are aliases. `--maintenance mode <mode>` persists the server mode after authorization. Debug endpoints require the separate `--debug` flag or a truthy `DEBUG` environment value. The default theme is dark. Theme and language preference cookies are optional and are written only after the visitor accepts the preference-cookie category on that device; preference forms are protected by the `csrf_token` double-submit cookie.
 
 Service commands use the detected host service manager: `quotes --service start|stop|restart|reload`, `quotes --service --install`, `quotes --service --disable`, and `quotes --service --uninstall`. Install enables and starts the service; disable stops it and removes it from automatic startup while leaving its service files and data in place. Uninstall requires the operator to type `yes` before removing service files, the managed account, and application directories. A regular user gets a systemd user unit or macOS LaunchAgent; system installations run with a dedicated service account after privileged listener binding. `--update branch <stable|beta|devel>` changes the persisted update channel; `--update check` checks GitHub Releases and `--update yes` verifies the release checksum before replacing the executable.

@@ -11,7 +11,7 @@ Quotes ships six complete interface locales: English (`en`), Spanish (`es`), Fre
 | `de` | German | Deutsch | LTR |
 | `it` | Italian | Italiano | LTR |
 
-The language registry and embedded locale files are the source of supported-language names, direction, and plural categories. The browser resolves a one-time `?lang=` selection first, then the `lang` cookie, then `Accept-Language`, and finally English. A visitor can choose a language in `/server/preferences`; Arabic pages use right-to-left document direction.
+The language registry and embedded locale files are the source of supported-language names, direction, and plural categories. The browser resolves a one-time `?lang=` selection first, then the `lang` cookie when the device has accepted preference cookies, then `Accept-Language`, and finally English. A visitor can choose a language in `/server/preferences`; saving it stores a cookie only after the visitor accepts that cookie category. Arabic pages use right-to-left document direction.
 
 ## Contributing a translation
 
