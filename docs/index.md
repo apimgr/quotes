@@ -4,6 +4,26 @@ Quotes is a public read-only application for five embedded collections: general 
 
 The application does not provide user accounts or community quote submissions. Its report form accepts abuse, DMCA, privacy, and security reports; anonymous owner tokens support MCP and credential management without creating accounts. Quote content is embedded at build time and must retain documented source and redistribution rights.
 
+## Quick start
+
+Start the server with Docker Compose:
+
+```sh
+docker compose -f docker/docker-compose.yml up -d
+```
+
+Or run a downloaded server binary with `./quotes --port 8080`. See the
+[installation guide](installation.md) for platform-specific downloads and
+service installation.
+
+## Features
+
+- Browse and filter quotes in the server-rendered web interface.
+- Read data through REST, GraphQL, and interactive OpenAPI/GraphQL explorers.
+- Use the CLI, RSS/Atom/JSON feeds, and MCP tools with an owner-linked token.
+- Submit abuse, DMCA, privacy, and security reports without an account.
+- Discover service metadata, sitemap, robots policy, and `llms.txt`.
+
 ## Interfaces
 
 - Browser: `/` with category and author filters, pagination, and system/light/dark themes; `/random` for a random quote; `/quotes/{id}` for a detail page.
@@ -14,4 +34,23 @@ The application does not provide user accounts or community quote submissions. I
 - MCP: `POST /api/v1/server/mcp` (owner-linked Bearer token required); help at `/server/help/mcp`.
 - CLI: `quotes-cli --server URL random --category programming`.
 
-Start with [installation](installation.md), [configuration](configuration.md), or the [API reference](api.md).
+## Documentation
+
+- [Installation](installation.md) — binaries, Docker, and service setup.
+- [Configuration](configuration.md) — server settings and runtime environment.
+- [API reference](api.md) — REST, OpenAPI, GraphQL, feeds, and MCP.
+- [CLI reference](cli.md) — commands, profiles, output formats, and tokens.
+- [Security](security.md) — public endpoints, owner tokens, reporting, and privacy.
+- [Integrations](integrations.md) — discovery, identity, and overlay services.
+- [Development](development.md) — Docker-backed development and verification.
+- [Translation](translating.md) — translation format, glossary, and review.
+
+## Links
+
+- [Repository](https://github.com/apimgr/quotes)
+- Swagger UI: `/server/docs/swagger`
+- GraphiQL: `/server/docs/graphql`
+
+## License
+
+MIT — see the [project license](https://github.com/apimgr/quotes/blob/main/LICENSE.md).
