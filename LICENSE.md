@@ -39,6 +39,9 @@ The following dependencies retain their respective licenses:
 | [golang.org/x/text](https://go.googlesource.com/text) | BSD-3-Clause |
 | [gopkg.in/yaml.v3](https://github.com/go-yaml/yaml) | MIT OR Apache-2.0 |
 | [modernc.org/sqlite](https://gitlab.com/cznic/sqlite) | BSD-3-Clause |
+| [Swagger UI 5.34.1](https://github.com/swagger-api/swagger-ui) | Apache-2.0 (see `src/httpapp/static/vendor/swagger-ui/LICENSE` and `NOTICE`) |
+| [GraphiQL 3.8.3](https://github.com/graphql/graphiql) | MIT (see `src/httpapp/static/vendor/graphiql/GRAPHIQL-LICENSE`) |
+| [React 18.3.1](https://github.com/facebook/react) and React DOM 18.3.1 | MIT (see `src/httpapp/static/vendor/graphiql/REACT-LICENSE` and `REACT-DOM-LICENSE`) |
 | [sapics/ip-location-db](https://github.com/sapics/ip-location-db) ASN data (`iptoasn-asn`), Country data (`iptoasn-country`) | PDDL |
 | [DB-IP](https://db-ip.com/) City data (`dbip-city`) | CC BY 4.0 |
 

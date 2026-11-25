@@ -73,7 +73,7 @@ server:
     driver: sqlite
     url: "{data_dir}/db/server.db"
   cache:
-    driver: memory
+    type: memory
   ssl:
     enabled: false
 ```
@@ -95,6 +95,8 @@ Directory options are available as flags and environment variables. A flag wins 
 | `LOG_DIR` | `--log` | Log directory |
 | `DATABASE_DIR` | — | SQLite database directory |
 | `BACKUP_DIR` | `--backup` | Backup directory |
+
+First-run initialization also accepts `APPLICATION_NAME` and `APPLICATION_TAGLINE`; they seed `server.branding` once and are ignored on later starts. `DATABASE_DRIVER`, `DATABASE_URL`, and `CACHE_URL` seed the initial database and cache connections only. Credential-bearing connection URLs are moved to `secrets.yml`.
 
 Other filesystem overrides include `--cache`, `--log`, and `--pid`. Listener and URL overrides include `--address`, `--port`, and `--baseurl`. Environment `PORT` and `LISTEN` initialize the first-run port and address; they do not override saved settings on every startup. `DOMAIN` overrides hostname discovery. `MODE` selects `production`, `development`, or `debug`; `DEBUG` independently enables debug behavior. SMTP environment variables are `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM_NAME`, `SMTP_FROM_EMAIL`, and `SMTP_TLS`. See AI.md PART 12 for exact precedence and the full runtime/init-only variable lists.
 
