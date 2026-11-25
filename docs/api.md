@@ -19,7 +19,7 @@ Quote reads are public and read-only. MCP and owner-token management require the
 | GET | `/api/v1/server/healthz.txt` | Plain-text health status |
 | GET | `/api/v1/server/help/mcp` | MCP connection details and tools |
 | GET | `/api/v1/server/dpo` | Data-protection contact details |
-| GET | `/api/v1/server/security` | Security contact information |
+| GET | `/api/v1/server/security` | Security contact information and conditional PGP key fingerprint |
 | GET | `/api/v1/server/security/policy` | Vulnerability disclosure policy |
 | GET | `/api/v1/server/security/thanks` | Security acknowledgments |
 | GET | `/api/v1/server/metrics[/{service}]` | Internal metrics; each service requires its own Bearer token. |
@@ -48,6 +48,10 @@ Quote reads are public and read-only. MCP and owner-token management require the
 | GET | `/api/v1/server/security/report/{tracking_id}?token=...` | Read an authorized security-report status; responses are not cacheable |
 
 Lists default to 250 items and allow up to 1000. Invalid categories, IDs, and pagination values return an error. The server applies configured per-client rate limits and request-size limits. API routes return JSON to browser and API clients; `Accept: text/plain` requests readable text output across JSON endpoints. The health API also has an explicit `.txt` endpoint.
+
+## Public feeds and discovery
+
+`GET /feed.xml` returns an Atom 1.0 feed and `GET /rss.xml` returns an RSS 2.0 feed with the same most recent public quote items. Both include absolute links built from the request's validated public origin, XML-escaped content, and `ETag`, `Last-Modified`, and `Cache-Control: public, max-age=300` headers. Conditional requests may return `304 Not Modified`. `GET /robots.txt` and `GET /sitemap.xml` provide search crawler rules and the public-page sitemap; `/.well-known/llms.txt` and `/llms.txt` describe the public API for AI clients.
 
 Metrics services are `prometheus`, `grafana`, and `loki`. `/server/metrics` is the Prometheus exposition handler; `/server/metrics/grafana` returns the importable dashboard and `/server/metrics/loki` returns bounded recent log streams. Their generated bearer tokens are stored separately under `server.metrics.auth.tokens` in `secrets.yml`. Query-string credentials are not accepted. Keep these internal endpoints behind network firewall rules and do not proxy them publicly.
 

@@ -26,6 +26,20 @@ The configuration directory contains `server.yml`, `yaml.d/` area files, and `se
 
 The merge accepts these sections in any YAML file, but the table is the canonical location. Existing area sections in `server.yml` are honored and automatically migrated on startup. Before moving values, migration creates a `server.yml.bak`; it writes area files atomically and then rewrites `server.yml`. If the configuration directory is read-only, migration is skipped with a warning and the merged settings remain usable.
 
+The web area file can configure the generated AI discovery document and conditional PGP public-key publication:
+
+```yaml
+web:
+  llms:
+    include_endpoints: true
+    include_schemas: false
+    custom_sections: []
+  security:
+    publish_pgp_key: false
+```
+
+`/.well-known/llms.txt` and `/llms.txt` are always available. An operator may add up to ten Markdown sections; unsafe links are reduced to plain link text and HTML tags are escaped. `web.security.publish_pgp_key` only publishes an existing security keypair. `quotes --maintenance pgp generate` creates a keypair after operator authorization and enables publication; `quotes --maintenance pgp export public [path]` exports its public key; `quotes --maintenance pgp delete` requires a typed confirmation and disables publication.
+
 Only `*.yml` and `*.yaml` regular files are loaded (internal symlinks are allowed). Hidden files, backups, other extensions, and subdirectories are ignored. Files `server.yml`, `secrets.yml`, and every drop-in use mode `0600`; `yaml.d/` uses `0700`. The server corrects modes at startup. A drop-in that remains group/world writable is ignored and logged. The watcher reloads `server.yml`, `yaml.d/`, `secrets.yml`, and `assets/`; invalid individual values fall back to defaults, and an unparseable file keeps its last good copy.
 
 ## Secrets and validation
