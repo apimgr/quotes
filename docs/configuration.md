@@ -28,6 +28,8 @@ The merge accepts these sections in any YAML file, but the table is the canonica
 
 Startup also migrates the legacy setting names listed in AI.md PART 5 before splitting area files. Canonical keys win when both names are present. Explicitly retired keys are removed after the backup is made; unlisted keys in defined sections are retained for the normal unknown-key warning. This includes the old logging, scheduler, web, database, branding, SEO, page content, contact, admin, SSL, and security names. The HTTPS port is folded into a single numeric `server.port` as a dual-port value; an already dual port is preserved. Legacy scheduler task rows retain only `enabled`, `schedule`, `retry_on_fail`, and `retry_delay`.
 
+Legacy installation and previous-key values are first moved from `server.yml` and drop-ins into owner-only `secrets.yml`. On startup, they are imported into `app_secrets` only when the canonical database row is missing; the legacy file keys are removed only after the database import succeeds. A database failure leaves the legacy values available for the next startup.
+
 The web area file can configure the generated AI discovery document and conditional PGP public-key publication:
 
 ```yaml
