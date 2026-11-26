@@ -36,9 +36,11 @@ docker run --rm --name "quotes-$(od -An -N4 -tx1 /dev/urandom | tr -d ' \n')" \
 The checker accepts `--help` and `--version`; both can be passed after the
 script path to inspect its usage without scanning dependencies.
 
-The script scans Go package licenses and temporarily generates a report under
-`/tmp/apimgr/`; it removes the report directory when it exits. It fails closed
-if the scanner cannot identify a dependency license or detects a copyleft
-license. At the current dependency versions, `go-licenses` reports
-`modernc.org/mathutil` v1.7.1 as unknown despite its BSD-3-Clause attribution
-in `LICENSE.md`, so the check exits non-zero until the scanner can classify it.
+The script scans Go package licenses and temporarily generates a protected
+report under `${TMPDIR:-/tmp}/{project_org}/{internal_name}-XXXXXX`; it removes
+the report directory when it exits. It downloads the pinned `mathutil` module
+into the Go module cache to verify its license file. It fails closed if the
+scanner cannot identify another dependency license or detects a copyleft
+license. The pinned `modernc.org/mathutil` license is checked against its
+tagged upstream `LICENSE` file and added as BSD-3-Clause because `go-licenses`
+cannot classify its nonstandard license metadata.
