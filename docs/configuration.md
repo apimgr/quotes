@@ -115,7 +115,7 @@ All feature settings and defaults are specified in AI.md. The following examples
 
 ### Logging
 
-Log files are created in the selected log directory. The configurable file kinds are `access.log`, `server.log`, `error.log`, `audit.log`, `security.log`, and `debug.log`; the logging subsystem also writes `app.log` and `auth.log` using their built-in formats. Audit records use JSON Lines and a hash chain. Log file modes are private to the service account, and rotated files follow each kind's retention setting.
+Log files are created in the selected log directory. The configurable file kinds are `access.log`, `server.log`, `error.log`, `audit.log`, `security.log`, and `debug.log`; the logging subsystem also writes `app.log` and `auth.log` using their built-in formats. Audit records use JSON Lines and a hash chain. Files use mode `0640`, and rotated files follow each kind's retention setting.
 
 ```yaml
 server:
