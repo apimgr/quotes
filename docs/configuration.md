@@ -113,6 +113,57 @@ Other filesystem overrides include `--cache`, `--log`, and `--pid`. Listener and
 
 All feature settings and defaults are specified in AI.md. The following examples show the area-file shape; omit settings that should use their defaults.
 
+### Logging
+
+Log files are created in the selected log directory. The configurable file kinds are `access.log`, `server.log`, `error.log`, `audit.log`, `security.log`, and `debug.log`; the logging subsystem also writes `app.log` and `auth.log` using their built-in formats. Audit records use JSON Lines and a hash chain. Log file modes are private to the service account, and rotated files follow each kind's retention setting.
+
+```yaml
+server:
+  logs:
+    level: info
+    defaults:
+      custom: ""
+      rotate: weekly,50MB
+      keep: none
+    access:
+      enabled: true
+      format: apache
+      rotate: monthly
+    server:
+      enabled: true
+      format: text
+    error:
+      enabled: true
+      format: text
+    audit:
+      enabled: true
+      format: json
+      rotate: daily
+    security:
+      enabled: true
+      format: fail2ban
+    debug:
+      enabled: false
+      format: text
+```
+
+Supported formats and rotation/retention values are listed in AI.md PART 12. Secret values and raw owner tokens are never written to logs. Successful health probes are omitted from the access log; failed probes remain visible.
+
+### Analytics tracking
+
+Analytics is disabled by default. Configure a supported provider under `server.tracking`; the server validates its ID and HTTPS URL requirements at load time and disables an invalid provider. Browser scripts load only after analytics consent. They are omitted on onion and I2P requests, and the same-origin `/server/tracking.js` endpoint returns `404` without consent or when tracking is disabled. CSP adds only the configured provider's sources.
+
+```yaml
+server:
+  tracking:
+    # google, matomo, piwik, owa, fathom, plausible, umami, simple, cloudflare
+    type: ""
+    id: ""
+    url: ""
+```
+
+Self-hosted Matomo, Piwik, OWA, and Umami require an HTTPS `url`. Fathom and Plausible accept an optional HTTPS URL for self-hosting. Google, Simple Analytics, and Cloudflare do not use `url`. See AI.md PART 12 for each provider's ID format.
+
 ```yaml
 # yaml.d/security.yml
 server:
