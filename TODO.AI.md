@@ -1,7 +1,6 @@
-# Remaining blocked alignment work
+# Remaining alignment work
 
-The implementation and documentation work is substantially aligned, but these items need external input or an accepted test-gate invocation before the repository can be declared complete.
-
-- **Approve the quote corpus.** Provide a redistribution-cleared source and attribution terms for the general, anime, Chuck Norris, dad-joke, and programming collections, or explicitly change the product scope. The current JSON files contain generated placeholder records and must not be represented as curated quotes.
-- **Replace and document the approved data.** After approval, integrate the corpus with its provenance and license records, preserve stable IDs and category counts, and update the affected fixtures and public data documentation.
-- **Complete full-app validation and delivery.** Obtain a test-gate-accepted invocation for `tests/incus.sh` and `tests/e2e.sh`, run both after corpus integration, resolve any failures, then prepare `COMMIT_MESS` and complete the repository gitcommit workflow.
+- **Approve and license the quote corpus.** The bundled general, anime, Chuck Norris, dad-joke, and programming collections contain generated placeholder records. Provide redistribution-cleared source material and attribution terms, or revise the product scope before these can be represented as curated quotes. Do not import unlicensed content.
+- **Integrate approved quote data.** Once the corpus and rights are supplied, replace the placeholder records, preserve stable IDs and category behavior, and update provenance, fixtures, and public data documentation.
+- **Complete OpenRC integration verification.** The systemd Incus lifecycle, routes, Tor/I2P behavior, persistence, and clean uninstall passed. OpenRC verification could not complete because Alpine package-index fetches failed with transient DNS errors in the Incus guest. Retry when guest package networking works.
+- **Finish delivery after the remaining blockers.** Repeat the applicable validation after corpus integration and OpenRC verification, then use the repository gitcommit workflow.
