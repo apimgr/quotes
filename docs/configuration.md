@@ -35,10 +35,12 @@ web:
     include_schemas: false
     custom_sections: []
   security:
+    report_url: https://github.com/apimgr/quotes/security/advisories/new
     publish_pgp_key: false
+    policy: ""
 ```
 
-`/.well-known/llms.txt` and `/llms.txt` are always available. An operator may add up to ten Markdown sections; unsafe links are reduced to plain link text and HTML tags are escaped. `web.security.publish_pgp_key` only publishes an existing security keypair. `quotes --maintenance pgp generate` creates a keypair after operator authorization and enables publication; `quotes --maintenance pgp export public [path]` exports its public key; `quotes --maintenance pgp delete` requires a typed confirmation and disables publication.
+`/.well-known/llms.txt` and `/llms.txt` are always available. An operator may add up to ten Markdown sections; unsafe links are reduced to plain link text and HTML tags are escaped. `web.security.report_url` sets the primary private vulnerability-reporting URL, and `web.security.policy` replaces the built-in coordinated disclosure policy with operator-supplied Markdown. `web.security.publish_pgp_key` only publishes an existing security keypair. `quotes --maintenance pgp generate` creates a keypair after operator authorization and enables publication; `quotes --maintenance pgp export public [path]` exports its public key; `quotes --maintenance pgp delete` requires a typed confirmation and disables publication.
 
 Only `*.yml` and `*.yaml` regular files are loaded (internal symlinks are allowed). Hidden files, backups, other extensions, and subdirectories are ignored. Files `server.yml`, `secrets.yml`, and every drop-in use mode `0600`; `yaml.d/` uses `0700`. The server corrects modes at startup. A drop-in that remains group/world writable is ignored and logged. The watcher reloads `server.yml`, `yaml.d/`, `secrets.yml`, and `assets/`; invalid individual values fall back to defaults, and an unparseable file keeps its last good copy.
 

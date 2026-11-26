@@ -2,6 +2,8 @@
 
 Quotes is a public, read-only quote service with a server-rendered browser, REST API, GraphQL endpoint, and companion CLI. Its five embedded collections cover general quotes, anime, Chuck Norris facts, dad jokes, and programming. The service has no user accounts or community quote submissions; embedded content requires documented source and redistribution rights.
 
+The bundled records are illustrative placeholders. They are not a curated or rights-cleared quote corpus and must not be presented or reused as one.
+
 [![CI](https://github.com/apimgr/quotes/actions/workflows/ci.yml/badge.svg)](https://github.com/apimgr/quotes/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/apimgr/quotes)](https://github.com/apimgr/quotes/releases) [![License](https://img.shields.io/github/license/apimgr/quotes)](LICENSE.md) [![Documentation](https://readthedocs.org/projects/apimgr-quotes/badge/?version=latest)](https://apimgr-quotes.readthedocs.io/)
 
 ## Install

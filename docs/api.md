@@ -42,8 +42,8 @@ Quote reads are public and read-only. MCP and owner-token management require the
 | GET | `/api/v1/server/swagger` | OpenAPI document |
 | GET | `/api/swagger` | OpenAPI compatibility alias |
 | GET | `/api/v1/server/graphql` | GraphQL endpoint description and query example |
-| POST | `/api/v1/server/graphql` | GraphQL query endpoint |
-| POST | `/api/graphql` | GraphQL compatibility alias |
+| GET, POST | `/api/v1/server/graphql` | Read-only GraphQL query endpoint; GET accepts `query`, optional `variables`, and `operationName` |
+| GET, POST | `/api/graphql` | GraphQL compatibility alias for the current version |
 | GET | `/api/healthz` | Health compatibility route |
 | GET | `/api/v1/server/security/report/{tracking_id}?token=...` | Read an authorized security-report status; responses are not cacheable |
 
@@ -63,7 +63,7 @@ curl -q -LSsf 'http://localhost:8080/api/v1/quotes?author=Grace%20Hopper&page=1&
 curl -q -LSsf http://localhost:8080/api/v1/server/swagger
 ```
 
-GraphQL supports `quote(id)`, `randomQuote(category)`, `quotes(category, author, page, limit)`, and `categories`. Send JSON with a `query` field to either GraphQL route. MCP uses JSON-RPC over POST and requires an owner or linked Bearer token. Create a separate linked token for each MCP client; the operator token is not accepted for MCP. Its tools are `quotes_list`, `quotes_random`, `quote_get`, and `categories_list`; use `tools/list` before `tools/call`.
+GraphQL supports `quote(id)`, `randomQuote(category)`, `quotes(category, author, page, limit)`, and `categories`. POST accepts JSON with a `query` field; GET accepts the query and optional `variables` and `operationName` parameters. MCP uses JSON-RPC over POST and requires an owner or linked Bearer token. Create a separate linked token for each MCP client; the operator token is not accepted for MCP. Its tools are `quotes_list`, `quotes_random`, `quote_get`, and `categories_list`; use `tools/list` before `tools/call`.
 
 ## Browser pages
 

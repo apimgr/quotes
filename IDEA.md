@@ -30,7 +30,7 @@ owner_token: quotes_owner_token_qwhzkfta
 - Standard server pages and preferences, help, security, privacy, contact, and integration surfaces required by AI.md PART 16
 - CLI client (`quotes-cli`) for shell-pipeline use: `quotes-cli random --category programming`
 - OpenAPI/Swagger docs at `/api/{api_version}/server/swagger`
-- GraphQL at `POST /api/graphql` (the canonical route is `/api/v1/server/graphql`)
+- GraphQL queries at `GET` and `POST /api/graphql` (the canonical route is `/api/v1/server/graphql`; GET accepts query-only operations)
 
 **Non-goals:**
 - No user accounts, registration, or login. Template-required owner and linked credentials are non-account identities for token management and MCP access
@@ -109,7 +109,7 @@ Project-defined quote routes are public and read-only. Template-defined pages an
 | GET | `/api/v1/server/{about,help,privacy,terms}` | None | Machine-readable page content. |
 | GET | `/api/v1/server/healthz` | None | Health status. |
 | GET | `/api/v1/server/swagger`, `/api/swagger` | None | OpenAPI document and direct alias. |
-| POST | `/api/v1/server/graphql`, `/api/graphql` | None | GraphQL query and direct alias. |
+| GET, POST | `/api/v1/server/graphql`, `/api/graphql` | None | Read-only GraphQL queries; GET accepts `query`, optional `variables`, and `operationName`. |
 | GET | `/api/healthz` | None | Health compatibility route. |
 | GET | `/api/v1/server/preferences` | None | Read/update browser preferences through cookies. |
 | GET, POST | `/api/v1/server/preferences/sync` | None | Export/import browser preferences. |
