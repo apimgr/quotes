@@ -2,7 +2,7 @@
 
 The application is implemented in Go. `src/catalog` loads the embedded collections, `src/database` stores anonymous owner-token, report, and scheduler state in SQLite, `src/httpapp` serves server-rendered pages, REST, OpenAPI, GraphQL, MCP, metrics, and report workflows, and `src/client` contains the companion CLI.
 
-Use the Docker-backed Makefile targets `dev`, `local`, `build`, `test`, `release`, and `docker`. Go unit tests live beside their packages. Run the SSR, no-JavaScript, and browser suite with `./tests/e2e.sh`; run systemd and OpenRC service checks with `./tests/incus.sh`. The executable basic binary-validation suite is `./tests/run_tests.sh`; it requires Docker and delegates to `tests/docker.sh`.
+Use the Docker-backed Makefile targets `dev`, `local`, `build`, `test`, `release`, `beta`, and `docker`. `release` prepares a stable SemVer release; the maintainer-only `beta` target tags and pushes the current clean `main` commit with a UTC timestamp. Go unit tests live beside their packages. Run the SSR, no-JavaScript, and browser suite with `./tests/e2e.sh`; run systemd and OpenRC service checks with `./tests/incus.sh`. The executable basic binary-validation suite is `./tests/run_tests.sh`; it requires Docker and delegates to `tests/docker.sh`.
 
 ## Service management
 
