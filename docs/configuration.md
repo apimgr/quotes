@@ -26,6 +26,8 @@ The configuration directory contains `server.yml`, `yaml.d/` area files, and `se
 
 The merge accepts these sections in any YAML file, but the table is the canonical location. Existing area sections in `server.yml` are honored and automatically migrated on startup. Before moving values, migration creates a `server.yml.bak`; it writes area files atomically and then rewrites `server.yml`. If the configuration directory is read-only, migration is skipped with a warning and the merged settings remain usable.
 
+Startup also migrates the legacy setting names listed in AI.md PART 5 before splitting area files. Canonical keys win when both names are present. Explicitly retired keys are removed after the backup is made; unlisted keys in defined sections are retained for the normal unknown-key warning. This includes the old logging, scheduler, web, database, branding, SEO, page content, contact, admin, SSL, and security names. The HTTPS port is folded into a single numeric `server.port` as a dual-port value; an already dual port is preserved. Legacy scheduler task rows retain only `enabled`, `schedule`, `retry_on_fail`, and `retry_delay`.
+
 The web area file can configure the generated AI discovery document and conditional PGP public-key publication:
 
 ```yaml
@@ -47,9 +49,11 @@ Only `*.yml` and `*.yaml` regular files are loaded (internal symlinks are allowe
 
 ## Secrets and validation
 
-Put credentials only in `secrets.yml`, including database credentials, operator and encryption keys, SMTP passwords, and metrics credentials. The server generates first-run secrets securely. Keep this file private, include it in protected backups, and never commit it. Secret values are never logged. Do not put passwords or tokens in `server.yml` or area files.
+`secrets.yml` is the at-rest home for credentials, including database credentials, operator and encryption keys, SMTP passwords, and metrics credentials. A hand-written secret in `server.yml` or an area file is moved to `secrets.yml` during startup migration; avoid placing new credentials in those files. The server creates missing operator and encryption keys securely. Keep `secrets.yml` private, include it in protected backups, and never commit it. Secret values are never logged; the newly generated operator token is disclosed once at creation.
 
 Every setting is validated. An invalid value is replaced by its documented default with one warning naming the file, line, and key; configuration errors do not stop startup. A YAML file that cannot be parsed is ignored, retaining its last good copy or built-in defaults. Duplicate scalar keys and explicit `null` values are invalid. Unknown keys in defined sections are warned about and ignored.
+
+`secrets.yml` follows the same per-key fallback rule. A malformed secrets document retains the last good secret values for that configuration path (or defaults when no last-good state exists), and warnings identify only the file and key; secret contents are never included in diagnostics.
 
 YAML comments go above the setting, never inline. For example:
 
@@ -81,7 +85,7 @@ server:
     enabled: false
 ```
 
-The server chooses and persists an available port in the 64000–64999 range when none is configured; application containers default to port 80. `server.address` is the bind address; `server.fqdn` is the public hostname. `server.baseurl` is the URL path prefix, default `/`. Trusted reverse-proxy headers are honored only from trusted peers. Configure additional proxy IPs/CIDRs under `server.trusted_proxies.additional`; do not trust forwarded headers from arbitrary clients.
+The server chooses and persists an available port in the 64000–64999 range when no port is configured or supplied at runtime; application containers default to port 80. At every startup, `--port` overrides `PORT`, which overrides the saved `server.port`; `--address` overrides `LISTEN`, which overrides the saved `server.address`. These runtime listener values are not written to `server.yml`. `server.address` is the bind address; `server.fqdn` is the public hostname. `server.baseurl` is the URL path prefix, default `/`. Trusted reverse-proxy headers are honored only from trusted peers. Configure additional proxy IPs/CIDRs under `server.trusted_proxies.additional`; do not trust forwarded headers from arbitrary clients.
 
 SQLite is local and creates its database under the data directory. For remote Turso/libsql, configure `server.database.driver: libsql` and the connection URL; put its auth token in `secrets.yml` as `server.database.token`. Cache supports the configured local or remote backend. Database and cache connection environment variables seed first-run configuration only; later changes belong in files.
 
@@ -99,9 +103,9 @@ Directory options are available as flags and environment variables. A flag wins 
 | `DATABASE_DIR` | — | SQLite database directory |
 | `BACKUP_DIR` | `--backup` | Backup directory |
 
-First-run initialization also accepts `APPLICATION_NAME` and `APPLICATION_TAGLINE`; they seed `server.branding` once and are ignored on later starts. `DATABASE_DRIVER`, `DATABASE_URL`, and `CACHE_URL` seed the initial database and cache connections only. Credential-bearing connection URLs are moved to `secrets.yml`.
+`APPLICATION_NAME` and `APPLICATION_TAGLINE` seed `server.branding` once on first run. `DATABASE_DRIVER`, `DATABASE_URL`, and `CACHE_URL` seed the initial database and cache connections only; later changes belong in files. Credential-bearing connection URLs are stored in `secrets.yml`. `PORT` and `LISTEN` are runtime variables read on every startup, with their corresponding CLI flags taking precedence; neither variable is first-run-only.
 
-Other filesystem overrides include `--cache`, `--log`, and `--pid`. Listener and URL overrides include `--address`, `--port`, and `--baseurl`. Environment `PORT` and `LISTEN` initialize the first-run port and address; they do not override saved settings on every startup. `DOMAIN` overrides hostname discovery. `MODE` selects `production`, `development`, or `debug`; `DEBUG` independently enables debug behavior. SMTP environment variables are `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM_NAME`, `SMTP_FROM_EMAIL`, and `SMTP_TLS`. See AI.md PART 12 for exact precedence and the full runtime/init-only variable lists.
+Other filesystem overrides include `--cache`, `--log`, and `--pid`. Listener and URL overrides include `--address`, `--port`, and `--baseurl`. `DOMAIN` overrides hostname discovery. `MODE` selects `production`, `development`, or `debug`; `DEBUG` independently enables debug behavior. SMTP environment variables are `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM_NAME`, `SMTP_FROM_EMAIL`, and `SMTP_TLS`. See AI.md PART 12 for exact precedence and the full runtime/init-only variable lists.
 
 ## Area configuration
 
