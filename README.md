@@ -10,7 +10,7 @@ The owner declares the bundled collections as original material created at the o
 
 ## Features
 
-The browser and CLI support six languages: English, Spanish, French, Arabic, German, and Italian.
+The browser and CLI support six languages: English, Spanish, French, Arabic, German, and Italian. See the [translation guide](docs/translating.md) for locale and contribution details.
 
 - Browse and filter quotes in a server-rendered web interface.
 - Read quotes through the versioned REST API and GraphQL endpoint.
