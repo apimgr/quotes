@@ -19,6 +19,7 @@ Quote reads are public and read-only. MCP and owner-token management require the
 | GET | `/api/v1/server/{about,help,privacy,terms}` | Machine-readable page information |
 | GET | `/api/v1/server/healthz` | JSON health status |
 | GET | `/api/v1/server/healthz.txt` | Plain-text health status |
+| GET | `/api/v1/server/auth/check` | Machine-only Bearer validation; returns `data.kind` as `operator` or `owner`; invalid/missing credentials receive 401 |
 | GET | `/api/v1/server/help/mcp` | MCP connection details and tools |
 | GET | `/api/v1/server/dpo` | Data-protection contact details |
 | GET | `/api/v1/server/security` | Security contact information and conditional PGP key fingerprint |

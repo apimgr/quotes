@@ -21,6 +21,8 @@ Download the latest release from [GitHub Releases](https://github.com/apimgr/quo
 | FreeBSD amd64 | `quotes-freebsd-amd64` | `quotes-cli-freebsd-amd64` |
 | FreeBSD arm64 | `quotes-freebsd-arm64` | `quotes-cli-freebsd-arm64` |
 
+Optional native GUI CLI artifacts (`quotes-cli-gui-{os}-{arch}`) are also built for Linux, macOS, and Windows. GUI artifacts use the operating system's dynamic loader and are desktop-specific; the default CLI artifacts remain static and distribution-independent.
+
 From a source checkout, platform installer scripts verify release checksums and
 use the binary's native service installer. See the [installation guide](docs/installation.md)
 for their commands and options.
@@ -83,7 +85,7 @@ quotes-cli --server http://localhost:8080 categories
 quotes-cli --server http://localhost:8080 quote 42
 ```
 
-The client supports random quotes, category listing, quote lookup, and filtered/paginated listing. `--output` accepts `plain` or `json`; `--lang` supports English, Spanish, French, Arabic, German, and Italian. See the [CLI guide](docs/cli.md) for full command and configuration details.
+The client supports random quotes, category listing, quote lookup, and filtered/paginated listing. `--output` accepts `plain`, `json`, or `table`; `QUOTES_OUTPUT_FORMAT` and `output.format` in `cli.yml` set the default. `--lang` supports English, Spanish, French, Arabic, German, and Italian. See the [CLI guide](docs/cli.md) for display modes, GUI artifacts, and full command and configuration details.
 
 ## Features
 

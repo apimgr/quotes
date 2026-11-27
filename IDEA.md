@@ -28,7 +28,7 @@ owner_token: quotes_owner_token_qwhzkfta
 - List all available categories with quote counts
 - Full web frontend (server-side Go templates, dark/light/auto theme, PWA, mobile-first)
 - Standard server pages and preferences, help, security, privacy, contact, and integration surfaces required by AI.md PART 16
-- CLI client (`quotes-cli`) for shell-pipeline use: `quotes-cli random --category programming`
+- CLI client (`quotes-cli`) for shell-pipeline use with table output by default and JSON, YAML, CSV, and plain formats; CLI output also supports configurable color, paging, quiet, and verbose settings: `quotes-cli random --category programming`
 - OpenAPI/Swagger docs at `/api/{api_version}/server/swagger`
 - GraphQL queries at `GET` and `POST /api/graphql` (the canonical route is `/api/v1/server/graphql`; GET accepts query-only operations)
 
@@ -113,6 +113,7 @@ Project-defined quote routes are public and read-only. Template-defined pages an
 | GET | `/api/v1/quotes/random.txt` | None | Plain-text random quote. |
 | GET | `/api/v1/server/{about,help,privacy,terms}` | None | Machine-readable page content. |
 | GET | `/api/v1/server/healthz` | None | Health status. |
+| GET | `/api/v1/server/auth/check` | Bearer token | Machine-only validation; returns `data.kind` as `operator` or `owner` without echoing or recording use of the token. |
 | GET | `/api/v1/server/swagger`, `/api/swagger` | None | OpenAPI document and direct alias. |
 | GET, POST | `/api/v1/server/graphql`, `/api/graphql` | None | Read-only GraphQL queries; GET accepts `query`, optional `variables`, and `operationName`. |
 | GET | `/api/healthz` | None | Health compatibility route. |
