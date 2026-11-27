@@ -28,3 +28,13 @@
 - Run required test and lint gates before committing; use `gitcommit --dir {project_dir} all` with an accurate `.git/COMMIT_MESS`.
 
 Full rules are in `.claude/rules/`; current tasks are tracked in `TODO.AI.md`. `AI.md` remains authoritative.
+
+## Before ANY Code Change
+
+Ask yourself:
+1. Have I read the relevant PART in AI.md?
+2. Does this follow the spec EXACTLY?
+3. Am I guessing or do I KNOW from the spec?
+4. Would this pass the compliance checklist?
+
+If unsure: READ THE SPEC. Do not guess.

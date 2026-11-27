@@ -109,6 +109,8 @@ Directory options are available as flags and environment variables. A flag wins 
 
 Other filesystem overrides include `--cache`, `--log`, and `--pid`. Listener and URL overrides include `--address`, `--port`, and `--baseurl`. `DOMAIN` overrides hostname discovery. `MODE` selects `production`, `development`, or `debug`; `DEBUG` independently enables debug behavior. SMTP environment variables are `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM_NAME`, `SMTP_FROM_EMAIL`, and `SMTP_TLS`. See AI.md PART 12 for exact precedence and the full runtime/init-only variable lists.
 
+Debug endpoints exist only when `--debug` or a truthy `DEBUG` value enables them. `MODE=debug` enables them by default, while an explicit `DEBUG` value or `--debug` flag can turn them off. Every `/debug/*` request still requires the operator token as a Bearer credential. Diagnostics live only at root paths such as `/debug/pprof` and `/debug/memory`; they have no versioned API aliases. The pprof command-line endpoint and expvar output redact process arguments.
+
 ## Area configuration
 
 All feature settings and defaults are specified in AI.md. The following examples show the area-file shape; omit settings that should use their defaults.
