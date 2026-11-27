@@ -102,6 +102,8 @@ Project-defined quote routes are public and read-only. Template-defined pages an
 | Method | Path | Auth | Purpose and request/response summary |
 |---|---|---|---|
 | GET | `/api/v1` | None | API identity, version, and category counts. |
+| GET | `/api/autodiscover` | None or bearer | Unversioned discovery envelope with server/API versions, public origins, exposed overlay addresses, and integrity-verified CLI release metadata. |
+| GET | `/cli/binaries/quotes-cli-{os}-{arch}[.exe]` | None, or bearer when configured | Streams the matching operator-provisioned, SHA-256-verified CLI release binary. |
 | GET | `/api/v1/categories` | None | Category names and counts. |
 | GET | `/api/v1/quotes` | None | Paginated quotes; optional category, author, page, and limit. |
 | GET | `/api/v1/categories/{category}/quotes` | None | Paginated quotes within a category. |

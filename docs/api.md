@@ -6,6 +6,8 @@ Quote reads are public and read-only. MCP and owner-token management require the
 
 | Method | Route | Purpose |
 |---|---|---|
+| GET | `/api/autodiscover` | Unversioned server identity, public origins, exposed overlay addresses, and verified CLI release metadata |
+| GET | `/cli/binaries/quotes-cli-{os}-{arch}[.exe]` | Download an operator-provisioned release binary after checksum verification |
 | GET | `/api/v1` | API name, version, and category counts |
 | GET | `/api/v1/categories` | Category-to-count map |
 | GET | `/api/v1/quotes` | Paginated list; optional `category`, `author`, `page`, `limit` |
@@ -56,6 +58,10 @@ Lists default to 250 items and allow up to 1000. Invalid categories, IDs, and pa
 ## Public feeds and discovery
 
 `GET /feed.xml` returns an Atom 1.0 feed and `GET /rss.xml` returns an RSS 2.0 feed with the same most recent public quote items. Both include absolute links built from the request's validated public origin, XML-escaped content, and `ETag`, `Last-Modified`, and `Cache-Control: public, max-age=300` headers. Conditional requests may return `304 Not Modified`. `GET /robots.txt` and `GET /sitemap.xml` provide search crawler rules and the public-page sitemap; `/.well-known/llms.txt` and `/llms.txt` describe the public API for AI clients.
+
+`GET /api/autodiscover` is an unversioned JSON endpoint with the standard success envelope. Its `data` contains `name`, `version`, `api.current_version`, the request's public origin first in `urls` followed by configured `DOMAIN` origins and trusted reverse-proxy origins learned by the server, `cli_versions`, and `cli_min_version`. Each `cli_versions` entry is keyed by an OS/architecture pair such as `linux-amd64` and contains `version` and `sha256`. Exposed Tor and I2P addresses appear in their own `onion` and `i2p` fields and are never listed as public HTTP origins.
+
+The server distributes operator-provisioned CLI releases at `GET /cli/binaries/quotes-cli-{os}-{arch}[.exe]`. Release files live in `{data_dir}/cli` by default; `cli.binary_download.dir` in `yaml.d/maintenance.yml` can override the directory, and `cli.binary_download.require_auth` can require a bearer credential. The server reads `version.txt` and `sha256.txt`, recomputes each binary's SHA-256, and advertises or serves only files whose published hash matches. The server never downloads or builds these release files. An empty release directory produces an empty `cli_versions` map and binary requests return `404`.
 
 Metrics services are `prometheus`, `grafana`, and `loki`. `/server/metrics` is the Prometheus exposition handler; `/server/metrics/grafana` returns the importable dashboard and `/server/metrics/loki` returns bounded recent log streams. Their generated bearer tokens are stored separately under `server.metrics.auth.tokens` in `secrets.yml`. Query-string credentials are not accepted. Keep these internal endpoints behind network firewall rules and do not proxy them publicly.
 
