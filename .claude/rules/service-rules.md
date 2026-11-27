@@ -12,9 +12,17 @@
 - Ship service templates for supported platforms using the stable internal name.
 - Keep install/uninstall operations explicit and safely reversible.
 
-## Key rules summary
-- Service files belong in the prescribed repository paths and use the expected runtime binary.
-- PID, signal, user/group, permissions, and shutdown behavior follow PART 23.
-- Systemd, runit, rc.d, launchd, and Windows support follow PART 24.
+## KEY DECISIONS (pre-answered)
+| Question | Answer | Spec Reference |
+|----------|--------|----------------|
+| What governs implementation? | Service support uses stable internal identifiers and explicit, reversible lifecycle operations. | PART 23, 24 |
+
+## TERMINOLOGY
+| Term | Meaning |
+|------|---------|
+| service install | platform-native service registration; privilege drop → least-privilege runtime identity. |
+
+## QUICK REFERENCE
+- Support only documented init systems and platform lifecycle behavior; never use host changes as a workaround.
 
 For complete details, see AI.md PART 23, 24

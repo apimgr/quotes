@@ -12,9 +12,17 @@
 - Store secrets in `secrets.yml` with owner-only permissions.
 - Validate configuration before starting services and hot-reload only as specified.
 
-## Key rules summary
-- `server.yml`, drop-ins, and `secrets.yml` are the configuration source of truth.
-- Separate secret values from ordinary configuration; first-run credentials are generated securely.
-- Apply path safety, boolean parsing, environment precedence, and mode behavior from their PARTs.
+## KEY DECISIONS (pre-answered)
+| Question | Answer | Spec Reference |
+|----------|--------|----------------|
+| What governs implementation? | Server settings come from server.yml, yaml.d area files, and secrets.yml. | PART 5, 6, 12 |
+
+## TERMINOLOGY
+| Term | Meaning |
+|------|---------|
+| secrets.yml | generated credentials; hot reload → supported configuration changes without restart. |
+
+## QUICK REFERENCE
+- Validate before startup, keep secrets out of server.yml, and document actual defaults and reload behavior.
 
 For complete details, see AI.md PART 5, 6, 12

@@ -12,9 +12,17 @@
 - Use the prescribed project structure and OS-specific paths.
 - Keep source, config, data, cache, log, and backup paths distinct.
 
-## Key rules summary
-- Resolve names from IDEA.md variables and repository state; never invent them.
-- Follow the platform path tables and Docker-only path distinction.
-- Preserve the eight-platform Go build matrix and static CGO-disabled binaries.
+## KEY DECISIONS (pre-answered)
+| Question | Answer | Spec Reference |
+|----------|--------|----------------|
+| What governs implementation? | Original quote content is project-owned; preserve its provenance and attribution boundary. | PART 2, 3, 4 |
+
+## TERMINOLOGY
+| Term | Meaning |
+|------|---------|
+| internal_name | stable on-disk identifier; embedded data → shipped static assets; runtime data → OS data directory. |
+
+## QUICK REFERENCE
+- Keep source and runtime paths separate, preserve stable names, and include accurate third-party license attribution.
 
 For complete details, see AI.md PART 2, 3, 4

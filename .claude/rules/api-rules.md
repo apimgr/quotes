@@ -12,9 +12,17 @@
 - Keep documented aliases attached to the same handler as canonical routes.
 - Implement health/versioning and built-in TLS requirements from their PARTs.
 
-## Key rules summary
-- API inventory in IDEA.md must cover each project-defined route.
-- OpenAPI and GraphQL descriptions must match actual handlers and response shapes.
-- Plain text and HTML negotiation follows the exact frontend/API rules.
+## KEY DECISIONS (pre-answered)
+| Question | Answer | Spec Reference |
+|----------|--------|----------------|
+| What governs implementation? | Quote retrieval is public, read-only, versioned, and consistent across REST, GraphQL, CLI, and browser. | PART 13, 14, 15 |
+
+## TERMINOLOGY
+| Term | Meaning |
+|------|---------|
+| canonical route | versioned server path; alias → documented direct path using the same behavior. |
+
+## QUICK REFERENCE
+- Keep OpenAPI, GraphQL, response envelopes, content negotiation, and docs aligned with registered handlers.
 
 For complete details, see AI.md PART 13, 14, 15

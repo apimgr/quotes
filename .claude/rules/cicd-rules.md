@@ -12,9 +12,17 @@
 - Pin actions to verified full commit SHAs and keep Renovate annotations intact.
 - Build and test in the prescribed Go container across required platforms.
 
-## Key rules summary
-- CI, release, beta, daily, and Docker workflows have distinct triggers and responsibilities.
-- Keep permissions minimal, use concurrency controls, and avoid exposing secrets in logs.
-- CI commands are explicit; container images follow the project-declared toolchain.
+## KEY DECISIONS (pre-answered)
+| Question | Answer | Spec Reference |
+|----------|--------|----------------|
+| What governs implementation? | All five supported providers ship equivalent security, test, build, and release gates. | PART 27 |
+
+## TERMINOLOGY
+| Term | Meaning |
+|------|---------|
+| workflow pin | verified full commit SHA or provider-required immutable digest; Renovate → only supported dependency updater. |
+
+## QUICK REFERENCE
+- Keep provider workflows fork-portable, least-privileged, secret-safe, and aligned with local checks; verify real CI after push.
 
 For complete details, see AI.md PART 27

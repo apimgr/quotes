@@ -12,9 +12,17 @@
 - Keep Makefile responsibilities local-development only.
 - Use project-scoped OS temp paths for runtime test output.
 
-## Key rules summary
-- Include required cache, concurrency, timeout, cleanup, and coverage behavior.
-- Keep test, lint, build, and CI commands explicit and auditable.
-- Preserve every required target and platform in the project matrix.
+## KEY DECISIONS (pre-answered)
+| Question | Answer | Spec Reference |
+|----------|--------|----------------|
+| What governs implementation? | Makefile targets are for local development; CI runs explicit commands without Makefile targets. | PART 25 |
+
+## TERMINOLOGY
+| Term | Meaning |
+|------|---------|
+| make test | Docker-backed Go tests, vet, vulnerability scan, and coverage gate. |
+
+## QUICK REFERENCE
+- Keep Docker-backed build/test workflows, scoped temp outputs, required platforms, and accurate help/target behavior.
 
 For complete details, see AI.md PART 25

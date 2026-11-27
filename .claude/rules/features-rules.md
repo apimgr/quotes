@@ -12,9 +12,17 @@
 - Keep scheduled work internal and bounded.
 - Protect backups and sensitive operational output as specified.
 
-## Key rules summary
-- SMTP configuration, automatic task scheduling, metrics exposure, backup encryption, and update verification follow their individual contracts.
-- GeoIP data and attribution must follow the specified license and refresh rules.
-- IDEA.md documents every integration trust assumption and failure mode.
+## KEY DECISIONS (pre-answered)
+| Question | Answer | Spec Reference |
+|----------|--------|----------------|
+| What governs implementation? | Required built-in features follow their individual PART contracts and documented failure behavior. | PART 17, 18, 19, 20, 21, 22 |
+
+## TERMINOLOGY
+| Term | Meaning |
+|------|---------|
+| scheduler | internal persisted task runner; GeoIP → deny-only risk signal; backup → verified archive. |
+
+## QUICK REFERENCE
+- Keep tasks bounded and persisted, protect backup data, and reflect feature health and configuration accurately.
 
 For complete details, see AI.md PART 17-22

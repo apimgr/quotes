@@ -12,9 +12,17 @@
 - Use parameterized database operations, connection pooling, and timeouts.
 - Implement security logging, token checks, and overlay-network rules as prescribed.
 
-## Key rules summary
-- Security headers and output sanitization apply to every public route.
-- Use the required embedded or external dependency only under its documented trust boundary.
-- Tor and I2P behavior follows PART 31; do not infer client identity from spoofable headers.
+## KEY DECISIONS (pre-answered)
+| Question | Answer | Spec Reference |
+|----------|--------|----------------|
+| What governs implementation? | Public quote reads stay unauthenticated; credentialed surfaces follow their specific token rules. | PART 9, 10, 11, 31 |
+
+## TERMINOLOGY
+| Term | Meaning |
+|------|---------|
+| owner token | anonymous credential-management identity; overlay → Tor hidden service or I2P eepsite. |
+
+## QUICK REFERENCE
+- Parameterize database queries, bound work and inputs, protect secrets, and apply the prescribed overlay lifecycle.
 
 For complete details, see AI.md PART 9, 10, 11, 31

@@ -12,9 +12,17 @@
 - Keep Compose files and host/container paths aligned with the conventions.
 - Use the required image variants and never invent a custom Go toolchain image.
 
-## Key rules summary
-- Production, development, and test compose services follow their separate rules.
-- Bind ports and networks using the specified project conventions.
-- Container config/data volumes persist operator configuration and secrets outside the container.
+## KEY DECISIONS (pre-answered)
+| Question | Answer | Spec Reference |
+|----------|--------|----------------|
+| What governs implementation? | The local docker target loads a host-platform image; CI owns multi-platform image publication. | PART 26 |
+
+## TERMINOLOGY
+| Term | Meaning |
+|------|---------|
+| runtime image | shipped service container; OCI metadata → build-time labels/annotations required by the platform. |
+
+## QUICK REFERENCE
+- Use the prescribed Dockerfiles, non-root runtime, tini, health checks, Compose conventions, and image contract checks.
 
 For complete details, see AI.md PART 26

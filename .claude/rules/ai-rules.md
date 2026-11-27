@@ -12,9 +12,17 @@
 - Keep docs in sync and record genuine unfinished implementation work in TODO.AI.md.
 - Fix IDEA.md when it contradicts mandatory AI.md behavior; never bend implementation to IDEA.md.
 
-## Key rules summary
-- AI.md PARTS 0-32 are the read-only implementation authority; PART 33 is reference only.
-- Search before creating; preserve user changes; validate before claiming completion.
-- Follow the mandatory implementation and TODO completion workflow in PART 0.
+## KEY DECISIONS (pre-answered)
+| Question | Answer | Spec Reference |
+|----------|--------|----------------|
+| What governs implementation? | AI.md is read-only and authoritative; IDEA.md defines product behavior. | PART 0, 1 |
+
+## TERMINOLOGY
+| Term | Meaning |
+|------|---------|
+| AI.md | implementation rules; IDEA.md → product intent; PART → authoritative AI.md section. |
+
+## QUICK REFERENCE
+- Read the relevant PART, preserve user changes, implement fully, sync documentation, and verify before completion.
 
 For complete details, see AI.md PART 0, 1

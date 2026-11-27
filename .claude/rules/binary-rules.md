@@ -12,9 +12,17 @@
 - Implement the exact CLI flags, exit codes, NO_COLOR behavior, and version output.
 - Keep client requests bounded and errors useful on stderr.
 
-## Key rules summary
-- Use Docker-backed Go Makefile targets; never run Go builds directly on the host.
-- Preserve binary names `quotes` and `quotes-cli`.
-- Implement PART 32 client behavior, including smart context and first-run behavior where applicable.
+## KEY DECISIONS (pre-answered)
+| Question | Answer | Spec Reference |
+|----------|--------|----------------|
+| What governs implementation? | Build static CGO-disabled server and CLI binaries for all eight OS/architecture pairs. | PART 7, 8, 32 |
+
+## TERMINOLOGY
+| Term | Meaning |
+|------|---------|
+| server | quotes binary; client → quotes-cli companion; NO_COLOR → disable terminal color output. |
+
+## QUICK REFERENCE
+- Use Docker-backed Makefile targets and keep CLI flags, exit codes, and version behavior in sync with the spec.
 
 For complete details, see AI.md PART 7, 8, 32

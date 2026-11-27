@@ -1,23 +1,30 @@
-# Project SPEC
+# Quotes Project Loader
 
-Project: quotes
-Role: Efficient loader for AI.md
+## Source of Truth
 
-## Source of truth
-- Read `IDEA.md` for Quotes product behavior and project variables.
-- Read `AI.md` for implementation rules; it is read-only.
-- Read `SPEC.md` first when present; a non-empty SPEC.md overrides AI.md.
-- Read relevant `.claude/rules/*.md` before changing matching code.
+- `AI.md` is the read-only implementation specification. Read the applicable PART before changing code, pages, workflows, or documentation.
+- `IDEA.md` defines Quotes product behavior and project variables; it does not override `AI.md`.
+- Read the matching `.claude/rules/*.md` and project TODO instructions before starting related work.
 
-## Project rules
-- This is a public, read-only quote API with no user accounts, quote submissions, or operator web panel. Implement the report-contact and anonymous owner-token surfaces required by AI.md; neither permits community quote contributions or creates user accounts.
-- Preserve the rights and provenance boundary for bundled quote content. Do not import datasets without clear redistribution permission.
-- Keep API, GraphQL, browser, CLI, and documentation behavior aligned.
-- Use Docker-backed Makefile targets for Go development and leave validation to the primary session.
-- Keep `TODO.AI.md` limited to genuinely unfinished or blocked work.
+## Before Any Code Change
 
-## Session workflow
-1. Read relevant source and tests before editing.
-2. Follow the matching AI.md PART and any linked requirements.
-3. Preserve existing worktree changes.
-4. Do not commit or push from an implementation subtask.
+1. Read the relevant AI.md PART and existing source/tests.
+2. Check the implementation against the spec; do not guess when the spec is silent.
+3. Preserve existing worktree changes and search for reusable code before adding more.
+4. Verify the affected behavior and keep browser, API, CLI, and documentation aligned.
+
+## Critical Rules
+
+### NEVER
+
+- Modify `AI.md`, invent quote provenance, add user accounts or community quote submissions, or leave stubs and unfinished TODOs in production code.
+- Run Go builds, tests, or binaries directly on the host; use the Docker-backed Makefile targets or specified Docker/Incus test scripts.
+- Use Makefile targets in CI; workflows use explicit commands.
+
+### ALWAYS
+
+- Keep the quote corpus original and project-owned, follow the eight-platform static Go build matrix, and preserve the public read-only API behavior.
+- Keep server-rendered pages functional without JavaScript and synchronize all public documentation and API descriptions.
+- Run required test and lint gates before committing; use `gitcommit --dir {project_dir} all` with an accurate `.git/COMMIT_MESS`.
+
+Full rules are in `.claude/rules/`; current tasks are tracked in `TODO.AI.md`. `AI.md` remains authoritative.
