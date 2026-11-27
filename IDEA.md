@@ -28,7 +28,7 @@ owner_token: quotes_owner_token_qwhzkfta
 - List all available categories with quote counts
 - Full web frontend (server-side Go templates, dark/light/auto theme, PWA, mobile-first)
 - Standard server pages and preferences, help, security, privacy, contact, and integration surfaces required by AI.md PART 16
-- CLI client (`quotes-cli`) for shell-pipeline use with table output by default and JSON, YAML, CSV, and plain formats; CLI output also supports configurable color, paging, quiet, and verbose settings: `quotes-cli random --category programming`
+- CLI client (`quotes-cli`) for shell-pipeline use with table output by default and JSON or plain formats; CLI output also supports configurable color, paging, quiet, and verbose settings: `quotes-cli random --category programming`
 - OpenAPI/Swagger docs at `/api/{api_version}/server/swagger`
 - GraphQL queries at `GET` and `POST /api/graphql` (the canonical route is `/api/v1/server/graphql`; GET accepts query-only operations)
 
