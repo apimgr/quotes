@@ -2,7 +2,7 @@
 
 Quotes is a public read-only application for five embedded collections: general quotes, anime, Chuck Norris facts, dad jokes, and programming quotes. Browse the server-rendered interface or use the REST and GraphQL APIs, the authenticated MCP tools, and the companion `quotes-cli` client.
 
-The application does not provide user accounts or community quote submissions. Its report form accepts abuse, DMCA, privacy, and security reports; anonymous owner tokens support MCP and credential management without creating accounts. Quote content is embedded at build time and must retain documented source and redistribution rights. The current bundled records are illustrative placeholders, not a curated or rights-cleared corpus.
+The application does not provide user accounts or community quote submissions. Its report form accepts abuse, DMCA, privacy, and security reports; anonymous owner tokens support MCP and credential management without creating accounts. The five embedded collections contain original project content created at the project owner's direction, with 30 records per collection. No third-party quote corpus is imported.
 
 ## Quick start
 

@@ -22,7 +22,7 @@ is controlled with `quotes --maintenance scheduler list|run|enable|disable`.
 
 `--maintenance backup [file]` writes a verified `.tar.gz` archive with a consistent SQLite snapshot; `--maintenance restore <file>` verifies it before replacing data and requires root, an empty database, or the service account plus the operator token. `--maintenance mode <mode>` and `--maintenance setup` update/reset server configuration with their required authorization checks. PGP key management supports `--maintenance pgp generate`, `--maintenance pgp export public [path]`, and `--maintenance pgp delete`. `--update check` and `--update yes` use the project GitHub Releases API, and `--update branch <name>` persists the channel under `server.update.branch`.
 
-Do not add quote content without a documented source and redistribution license. Update the API and user documentation when public behavior or configuration changes. Run Go tests and vulnerability checks with `make test`; run shell lint through the repository's lint wrapper.
+Do not add third-party quote content without a documented source and redistribution license. Original project content needs project-owner authorization and must not be presented with an invented source. Update the API and user documentation when public behavior or configuration changes. Run Go tests and vulnerability checks with `make test`; run shell lint through the repository's lint wrapper.
 
 ## License attribution check
 

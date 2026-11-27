@@ -62,6 +62,8 @@ There are no user accounts. Public browsing, REST, and GraphQL require no authen
 
 Quote records contain no PII. The template-required contact reporting flow handles reporter-submitted PII under its configured retention and delivery rules. Browser preference cookies contain no PII.
 
+The five embedded collections contain original project content created at the project owner's direction. No third-party quote corpus is imported. Each collection currently ships 30 records; future collection updates must preserve the same original-content and attribution boundary.
+
 ### Trust boundaries & external services
 
 | Boundary | Trust level | Notes |

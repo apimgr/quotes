@@ -59,7 +59,7 @@ Metrics services are `prometheus`, `grafana`, and `loki`. `/server/metrics` is t
 
 ```sh
 curl -q -LSsf 'http://localhost:8080/api/v1/quotes/random?category=programming'
-curl -q -LSsf 'http://localhost:8080/api/v1/quotes?author=Grace%20Hopper&page=1&limit=20'
+curl -q -LSsf 'http://localhost:8080/api/v1/quotes?author=Quotes%20Project&page=1&limit=20'
 curl -q -LSsf http://localhost:8080/api/v1/server/swagger
 ```
 
