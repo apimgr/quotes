@@ -114,7 +114,7 @@ See the [security model](docs/security.md), [integrations guide](docs/integratio
 
 ## Development
 
-Go development uses Docker-backed Makefile targets: `make dev`, `make local`, `make build`, `make test`, `make release`, `make beta`, and `make docker`. `make test BINARY_TEST=1` runs the Docker binary-validation suite; `make test LICENSE_TEST=1` scans dependency licenses; `make test E2E_TEST=1` runs browser tests. Release builds target Linux, macOS, Windows, and FreeBSD on amd64 and arm64. See the [development guide](docs/development.md).
+Go development uses Docker-backed Makefile targets: `make dev`, `make local`, `make build`, `make test`, `make release`, `make beta`, and `make docker`. `make test BINARY_TEST=1` runs the Docker binary-validation suite; `make test LICENSE_TEST=1` scans dependency licenses. Run browser beta tests separately with `./tests/e2e.sh`. Release builds target Linux, macOS, Windows, and FreeBSD on amd64 and arm64. See the [development guide](docs/development.md).
 
 ## Disclaimer
 

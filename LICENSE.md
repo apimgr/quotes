@@ -74,6 +74,7 @@ This software includes the following third-party libraries and web assets:
 | Swagger UI | 5.34.1 | Apache-2.0 | SmartBear Software Inc. (see bundled LICENSE and NOTICE) |
 | GraphiQL | 3.8.3 | MIT | 2021 GraphQL Contributors (see bundled license) |
 | React and React DOM | 18.3.1 | MIT | Facebook, Inc. and its affiliates (see bundled licenses) |
+| axe-core | 4.14.0 | MPL-2.0; bundled dependencies MIT | Deque Systems, Inc.; see `tests/e2e/vendor/axe-LICENSE.txt` and `axe-LICENSE-3RD-PARTY.txt` |
 | sapics/ip-location-db (`iptoasn-asn`, `iptoasn-country`) | current embedded snapshot | PDDL | iptoasn.com contributors |
 | DB-IP City (`dbip-city`) | current embedded snapshot | CC BY 4.0 | DB-IP.com |
 
