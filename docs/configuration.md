@@ -187,6 +187,10 @@ server:
 # yaml.d/notifications.yml
 server:
   notifications:
+    webui:
+      position: top-right
+      duration: 3
+      warning_duration: 5
     email:
       smtp:
         host: mail.example.org
