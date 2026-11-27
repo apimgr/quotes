@@ -118,7 +118,8 @@ Project-defined quote routes are public and read-only. Template-defined pages an
 | GET, POST | `/api/v1/server/graphql`, `/api/graphql` | None | Read-only GraphQL queries; GET accepts `query`, optional `variables`, and `operationName`. |
 | GET | `/api/healthz` | None | Health compatibility route. |
 | GET | `/api/v1/server/preferences` | None | Read/update browser preferences through cookies. |
-| GET, POST | `/api/v1/server/preferences/sync` | None | Export/import browser preferences. |
+| GET | `/api/v1/server/preferences/sync` | None | Export browser preferences. |
+| POST | `/api/v1/server/preferences` | None | Apply validated browser preference values. |
 | GET | `/api/v1/server/preferences/sync/import` | None | Apply validated shared preference values. |
 | GET | `/api/v1/server/help/mcp` | None | MCP connection information. |
 | POST | `/api/v1/server/preferences/tokens/primary` | None unless a valid owner token is already supplied | Issue a primary owner token; rejects callers already presenting a valid owner credential. |

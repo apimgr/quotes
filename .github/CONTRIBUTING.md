@@ -18,7 +18,7 @@ The manual integration suites are separate from `make test`:
 ```sh
 bash tests/run_tests.sh
 bash tests/incus.sh
-bash tests/e2e.sh
+./tests/e2e.sh
 ```
 
 The documentation source is in `docs/`; its MkDocs configuration is at the

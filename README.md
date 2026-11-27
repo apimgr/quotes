@@ -6,7 +6,7 @@
 
 Quotes is a public, read-only quote service with a server-rendered browser, REST API, GraphQL endpoint, and companion CLI. Its five embedded collections cover general quotes, anime, Chuck Norris facts, dad jokes, and programming. The service has no user accounts or community quote submissions.
 
-The owner declares the bundled collections as original content written by AI at the owner's direction. Each collection currently contains 30 records, each record is marked `source: "original"`, and the content is released under the project MIT license. No third-party quote corpus is included.
+The owner declares the bundled collections as original material created at the owner's direction. Each collection currently contains 30 records, each record is marked `source: "original"`, and the content is released under the project MIT license. No third-party quote corpus is included.
 
 ## Features
 
@@ -114,7 +114,7 @@ See the [security model](docs/security.md), [integrations guide](docs/integratio
 
 ## Development
 
-Go development uses Docker-backed Makefile targets: `make dev`, `make local`, `make build`, `make test`, `make release`, `make beta`, and `make docker`. `make test BINARY_TEST=1` runs the Docker binary-validation suite; `make test LICENSE_TEST=1` scans dependency licenses. Run browser beta tests separately with `./tests/e2e.sh`. Release builds target Linux, macOS, Windows, and FreeBSD on amd64 and arm64. See the [development guide](docs/development.md).
+Go development uses the six Docker-backed Makefile targets: `make build`, `make test`, `make release`, `make docker`, `make clean`, and `make help`. `make test` runs the lint, vulnerability, unit, coverage, and basic binary checks. Run browser E2E checks separately with `./tests/e2e.sh`, and service integration checks with `./tests/incus.sh`. Release builds create local artifacts only; CI publishes releases. Build and release artifacts target Linux, macOS, Windows, and FreeBSD on amd64 and arm64. See the [development guide](docs/development.md).
 
 ## Disclaimer
 
