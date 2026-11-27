@@ -10,12 +10,14 @@ The owner declares the bundled collections as original material created at the o
 
 ## Features
 
+The browser and CLI support six languages: English, Spanish, French, Arabic, German, and Italian.
+
 - Browse and filter quotes in a server-rendered web interface.
 - Read quotes through the versioned REST API and GraphQL endpoint.
 - Use interactive, locally hosted Swagger UI and GraphiQL pages.
-- Access MCP tools with an anonymous owner-linked bearer token.
+- Connect an MCP client with its own linked Bearer token; the operator can use `server.token` for their own MCP tooling.
 - Submit abuse, DMCA, privacy, or security reports without creating an account.
-- Discover RSS, Atom, JSON Feed, sitemap, robots, and `llms.txt` resources.
+- Discover Atom and RSS feeds, the sitemap, robots policy, and `llms.txt`.
 - Run optional Tor and I2P overlay services.
 
 ## Production
@@ -87,13 +89,13 @@ The container listens on port 80. Persist `/config` to retain the generated serv
 
 ## Client
 
-Set the server URL with `--server URL`, `QUOTES_SERVER_PRIMARY`, or `server.primary` in the CLI configuration. Quotes has no compiled default server.
+Set the server URL to your Quotes instance with `--server URL`, `QUOTES_SERVER_PRIMARY`, or `server.primary` in the CLI configuration. Quotes has no compiled default server; replace `YOUR_SERVER` below with your server host.
 
 ```sh
-quotes-cli --server http://localhost:8080 random --category programming
-quotes-cli --server http://localhost:8080 categories
-quotes-cli --server http://localhost:8080 quote 42
-quotes-cli --server http://localhost:8080 list --author "Ada Lovelace"
+quotes-cli --server https://YOUR_SERVER random --category programming
+quotes-cli --server https://YOUR_SERVER categories
+quotes-cli --server https://YOUR_SERVER quote 42
+quotes-cli --server https://YOUR_SERVER list --author "Ada Lovelace"
 ```
 
 The client supports random quotes, category listing, quote lookup, and filtered, paginated listing. `--output` accepts `table`, `json`, or `plain`; `QUOTES_OUTPUT_FORMAT` and `output.format` set the default. See the [CLI guide](docs/cli.md) for display modes, shell integration, GUI artifacts, and configuration details.
@@ -104,7 +106,7 @@ The server stores configuration under the platform-specific configuration direct
 
 ## API
 
-REST uses `/api/v1/`; GraphQL is at `/api/v1/server/graphql`; OpenAPI JSON is at `/api/v1/server/swagger`. Browser API references are at `/server/docs/swagger` and `/server/docs/graphql`. MCP is at `/api/v1/server/mcp` and requires an owner-linked bearer token. Linked tokens have `read` or `read-write` scope; token management is available at `/server/preferences/tokens`.
+REST uses `/api/v1/`; GraphQL is at `/api/v1/server/graphql`; OpenAPI JSON is at `/api/v1/server/swagger`. Browser API references are at `/server/docs/swagger` and `/server/docs/graphql`. MCP is at `/api/v1/server/mcp` and requires a valid Bearer token. The operator may use `server.token` for their own tooling; each standing MCP client should use a separate linked token. Linked tokens have `read` or `read-write` scope; token management is available at `/server/preferences/tokens`.
 
 See the [API reference](docs/api.md) for routes, formats, and authentication behavior.
 

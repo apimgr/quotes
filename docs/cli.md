@@ -2,12 +2,14 @@
 
 `quotes-cli` reads from the Quotes API. Public quote retrieval does not require a token. The client has no compiled public-server default; configure a server with `--server`, `QUOTES_SERVER_PRIMARY`, or `server.primary` in its configuration. Starting `quotes-cli` without a command selects an interface from the environment and `display.mode` configuration. Static default builds provide the TUI and CLI; optional GUI builds provide the native GUI on local Linux, macOS, and Windows desktops.
 
+Replace `YOUR_SERVER` below with the host name of your Quotes instance. Quotes has no compiled server URL:
+
 ```sh
-quotes-cli --server http://localhost:8080 random --category programming
-quotes-cli --server http://localhost:8080 categories
-quotes-cli --server http://localhost:8080 quote 42
-quotes-cli --server http://localhost:8080 list --category programming --author "Ada Lovelace"
-quotes-cli --server http://localhost:8080 --output json random
+quotes-cli --server https://YOUR_SERVER random --category programming
+quotes-cli --server https://YOUR_SERVER categories
+quotes-cli --server https://YOUR_SERVER quote 42
+quotes-cli --server https://YOUR_SERVER list --category programming --author "Ada Lovelace"
+quotes-cli --server https://YOUR_SERVER --output json random
 quotes-cli --update check
 quotes-cli --update yes
 ```

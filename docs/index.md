@@ -6,13 +6,13 @@ The application does not provide user accounts or community quote submissions. I
 
 ## Quick start
 
-Start the server with Docker Compose:
+Pull and start the published container image with Docker Compose:
 
 ```sh
 docker compose -f docker/docker-compose.yml up -d
 ```
 
-Or run a downloaded server binary with `./quotes --port 8080`. See the
+Or run the downloaded Linux amd64 release asset with `./quotes-linux-amd64 --port 8080`. See the
 [installation guide](installation.md) for platform-specific downloads and
 service installation.
 
@@ -20,7 +20,7 @@ service installation.
 
 - Browse and filter quotes in the server-rendered web interface.
 - Read data through REST, GraphQL, and interactive OpenAPI/GraphQL explorers.
-- Use the CLI, RSS/Atom/JSON feeds, and MCP tools with an owner-linked token.
+- Use the CLI, RSS/Atom feeds, and MCP. MCP clients use their own linked token; the operator can use `server.token` for their own tooling.
 - Submit abuse, DMCA, privacy, and security reports without an account.
 - Discover service metadata, sitemap, robots policy, and `llms.txt`.
 
@@ -31,7 +31,7 @@ service installation.
 - REST: `/api/v1/` with quote, category, and health routes. See [API reference](api.md).
 - OpenAPI: `/api/v1/server/swagger`; browser page at `/server/docs/swagger`.
 - GraphQL: `POST /api/v1/server/graphql`; browser explorer at `/server/docs/graphql`.
-- MCP: `POST /api/v1/server/mcp` (owner-linked Bearer token required); help at `/server/help/mcp`.
+- MCP: `POST /api/v1/server/mcp` (valid Bearer token required; operator token accepted for the operator's own tooling); help at `/server/help/mcp`.
 - CLI: `quotes-cli --server URL random --category programming`.
 
 ## Documentation

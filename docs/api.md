@@ -44,7 +44,7 @@ For create and update, `expires` accepts `never`, `7d`, `30d`, `90d`, or `1y`. A
 | POST | `/api/v1/server/preferences` | Apply valid theme or language preferences only after this device accepts preference cookies; otherwise return `consent_required` and list the values as ignored |
 | GET | `/api/v1/server/preferences/sync` | Export preferences as a URL and base64url code |
 | GET | `/api/v1/server/preferences/sync/import` | Import allowed preferences from direct parameters or a code |
-| POST | `/api/v1/server/mcp` | MCP Streamable HTTP endpoint; owner or linked Bearer token required |
+| POST | `/api/v1/server/mcp` | MCP Streamable HTTP endpoint; operator, owner, or linked Bearer token required |
 | POST | `/api/mcp`, `/mcp` | Direct MCP aliases |
 | GET | `/api/v1/server/swagger` | OpenAPI document |
 | GET | `/api/swagger` | OpenAPI compatibility alias |
@@ -68,13 +68,15 @@ Metrics services are `prometheus`, `grafana`, and `loki`. `/server/metrics` is t
 
 ## Examples
 
+Replace `YOUR_SERVER` with the host name of your Quotes instance:
+
 ```sh
-curl -q -LSsf 'http://localhost:8080/api/v1/quotes/random?category=programming'
-curl -q -LSsf 'http://localhost:8080/api/v1/quotes?author=Quotes%20Project&page=1&limit=20'
-curl -q -LSsf http://localhost:8080/api/v1/server/swagger
+curl -q -LSsf 'https://YOUR_SERVER/api/v1/quotes/random?category=programming'
+curl -q -LSsf 'https://YOUR_SERVER/api/v1/quotes?author=Quotes%20Project&page=1&limit=20'
+curl -q -LSsf https://YOUR_SERVER/api/v1/server/swagger
 ```
 
-GraphQL supports `quote(id)`, `randomQuote(category)`, `quotes(category, author, page, limit)`, and `categories`. POST accepts JSON with a `query` field; GET accepts the query and optional `variables` and `operationName` parameters. MCP uses JSON-RPC over POST and requires an owner or linked Bearer token. Create a separate linked token for each MCP client; the operator token is not accepted for MCP. Linked tokens carry `read` or `read-write` scope (default `read-write`), while primary tokens are `global`; token lists include scope, and changing a linked token's scope requires revoking and recreating it. Its tools are `quotes_list`, `quotes_random`, `quote_get`, and `categories_list`; use `tools/list` before `tools/call`.
+GraphQL supports `quote(id)`, `randomQuote(category)`, `quotes(category, author, page, limit)`, and `categories`. POST accepts JSON with a `query` field; GET accepts the query and optional `variables` and `operationName` parameters. MCP uses JSON-RPC over POST and requires a valid Bearer token. The operator token (`server.token`) is accepted and exposes operator-only tools for the operator's own tooling; do not give it to another person or a shared client. For each standing MCP client, create a separate linked token with the minimum required scope. Linked tokens carry `read` or `read-write` scope (default `read-write`), while primary tokens are `global`; token lists include scope, and changing a linked token's scope requires revoking and recreating it. Its tools are `quotes_list`, `quotes_random`, `quote_get`, and `categories_list`; use `tools/list` before `tools/call`.
 
 ## Browser pages
 

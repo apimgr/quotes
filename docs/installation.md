@@ -6,7 +6,7 @@ without a version in their asset name; use the latest-release URL shown below.
 
 ## Docker
 
-Build and start the application with Docker Compose:
+Pull and start the published container image with Docker Compose:
 
 ```sh
 docker compose -f docker/docker-compose.yml up -d
@@ -121,11 +121,11 @@ chooses and persists one from `64000`–`64999` if none was configured.
 ## CLI
 
 The `quotes-cli` binary requires a server URL unless configured in `cli.yml` or
-with `QUOTES_SERVER_PRIMARY`:
+with `QUOTES_SERVER_PRIMARY`. Replace `YOUR_SERVER` with the host name of your Quotes instance:
 
 ```sh
-./quotes-cli --server http://localhost:8080 categories
-./quotes-cli --server http://localhost:8080 random --category programming
+./quotes-cli --server https://YOUR_SERVER categories
+./quotes-cli --server https://YOUR_SERVER random --category programming
 ```
 
 See the [CLI reference](cli.md) for commands, configuration, and token use.
