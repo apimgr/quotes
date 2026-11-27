@@ -1,12 +1,24 @@
 # Quotes
 
-Quotes is a public, read-only quote service with a server-rendered browser, REST API, GraphQL endpoint, and companion CLI. Its five embedded collections cover general quotes, anime, Chuck Norris facts, dad jokes, and programming. The service has no user accounts or community quote submissions.
-
-The embedded catalog contains original project content created at the project owner's direction. It does not import a third-party quote corpus. Each collection currently contains 30 records; the content is released with the project under the repository license. Future third-party content requires a documented source and redistribution rights.
-
 [![CI](https://github.com/apimgr/quotes/actions/workflows/ci.yml/badge.svg)](https://github.com/apimgr/quotes/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/apimgr/quotes)](https://github.com/apimgr/quotes/releases) [![License](https://img.shields.io/github/license/apimgr/quotes)](LICENSE.md) [![Documentation](https://readthedocs.org/projects/apimgr-quotes/badge/?version=latest)](https://apimgr-quotes.readthedocs.io/)
 
-## Install
+## About
+
+Quotes is a public, read-only quote service with a server-rendered browser, REST API, GraphQL endpoint, and companion CLI. Its five embedded collections cover general quotes, anime, Chuck Norris facts, dad jokes, and programming. The service has no user accounts or community quote submissions.
+
+The owner declares the bundled collections as original content written by AI at the owner's direction. Each collection currently contains 30 records, each record is marked `source: "original"`, and the content is released under the project MIT license. No third-party quote corpus is included.
+
+## Features
+
+- Browse and filter quotes in a server-rendered web interface.
+- Read quotes through the versioned REST API and GraphQL endpoint.
+- Use interactive, locally hosted Swagger UI and GraphiQL pages.
+- Access MCP tools with an anonymous owner-linked bearer token.
+- Submit abuse, DMCA, privacy, or security reports without creating an account.
+- Discover RSS, Atom, JSON Feed, sitemap, robots, and `llms.txt` resources.
+- Run optional Tor and I2P overlay services.
+
+## Production
 
 Download the latest release from [GitHub Releases](https://github.com/apimgr/quotes/releases/latest). Server and CLI binaries are published for all eight platform and architecture combinations:
 
@@ -23,9 +35,7 @@ Download the latest release from [GitHub Releases](https://github.com/apimgr/quo
 
 Optional native GUI CLI artifacts (`quotes-cli-gui-{os}-{arch}`) are also built for Linux, macOS, and Windows. GUI artifacts use the operating system's dynamic loader and are desktop-specific; the default CLI artifacts remain static and distribution-independent.
 
-From a source checkout, platform installer scripts verify release checksums and
-use the binary's native service installer. See the [installation guide](docs/installation.md)
-for their commands and options.
+Platform installer scripts verify release checksums and use the binary's native service installer. See the [installation guide](docs/installation.md) for commands and options.
 
 ### Linux
 
@@ -48,7 +58,7 @@ xattr -d com.apple.quarantine ./quotes 2>/dev/null || true
 
 ### Windows
 
-Download the matching `.exe` from the releases page and add its directory to `PATH`. Start the server in PowerShell, for example:
+Download the matching `.exe` from the releases page and add its directory to `PATH`. Start the server in PowerShell:
 
 ```powershell
 .\quotes-windows-amd64.exe --port 8080
@@ -65,7 +75,7 @@ chmod +x quotes
 ./quotes --port 8080
 ```
 
-On Linux and macOS, `quotes --service --install` installs a user service without elevated privileges or a system service when elevated. Native installs choose and persist an available port in the `64000`–`64999` range when none is configured; containers use port `80`. Windows and FreeBSD system service installation requires administrator/root privileges. See the [installation guide](docs/installation.md) for details.
+On Linux and macOS, `quotes --service --install` installs a user service without elevated privileges or a system service when elevated. Native installs choose and persist an available port in the `64000`–`64999` range when none is configured; containers use port `80`. Windows and FreeBSD system service installation requires administrator or root privileges.
 
 ### Docker
 
@@ -75,31 +85,32 @@ docker compose -f docker/docker-compose.yml up -d
 
 The container listens on port 80. Persist `/config` to retain the generated server configuration and secrets.
 
-## Use quotes-cli
+## Client
 
-Set the server URL with `--server URL`, `QUOTES_SERVER_PRIMARY`, or `server.primary` in `~/.config/apimgr/quotes/cli.yml` (Windows: `%APPDATA%\apimgr\quotes\cli.yml`). Quotes has no compiled default server.
+Set the server URL with `--server URL`, `QUOTES_SERVER_PRIMARY`, or `server.primary` in the CLI configuration. Quotes has no compiled default server.
 
 ```sh
 quotes-cli --server http://localhost:8080 random --category programming
 quotes-cli --server http://localhost:8080 categories
 quotes-cli --server http://localhost:8080 quote 42
+quotes-cli --server http://localhost:8080 list --author "Ada Lovelace"
 ```
 
-The client supports random quotes, category listing, quote lookup, and filtered/paginated listing. `--output` accepts `plain`, `json`, or `table`; `QUOTES_OUTPUT_FORMAT` and `output.format` in `cli.yml` set the default. `--lang` supports English, Spanish, French, Arabic, German, and Italian. See the [CLI guide](docs/cli.md) for display modes, GUI artifacts, and full command and configuration details.
+The client supports random quotes, category listing, quote lookup, and filtered, paginated listing. `--output` accepts `table`, `json`, or `plain`; `QUOTES_OUTPUT_FORMAT` and `output.format` set the default. See the [CLI guide](docs/cli.md) for display modes, shell integration, GUI artifacts, and configuration details.
 
-## Features
+## Configuration
 
-- Browse and filter quotes in a server-rendered web interface.
-- Read quotes through the versioned REST API and GraphQL endpoint.
-- Use interactive, locally hosted Swagger UI and GraphiQL pages.
-- Access MCP tools with an anonymous owner-linked bearer token.
-- Submit abuse, DMCA, privacy, or security reports without creating an account.
-- Discover RSS, Atom, JSON Feed, sitemap, robots, and `llms.txt` resources.
-- Run optional Tor and I2P overlay services.
+The server stores configuration under the platform-specific configuration directory. Containers persist `/config`. The CLI configuration is `~/.config/apimgr/quotes/cli.yml` on Unix and `%APPDATA%\apimgr\quotes\cli.yml` on Windows. See the [configuration guide](docs/configuration.md) for configuration areas, defaults, permissions, and secrets handling.
+
+## API
 
 REST uses `/api/v1/`; GraphQL is at `/api/v1/server/graphql`; OpenAPI JSON is at `/api/v1/server/swagger`. Browser API references are at `/server/docs/swagger` and `/server/docs/graphql`. MCP is at `/api/v1/server/mcp` and requires an owner-linked bearer token. Linked tokens have `read` or `read-write` scope; token management is available at `/server/preferences/tokens`.
 
-See the [API reference](docs/api.md), [configuration guide](docs/configuration.md), [security model](docs/security.md), and [integrations guide](docs/integrations.md).
+See the [API reference](docs/api.md) for routes, formats, and authentication behavior.
+
+## Other
+
+See the [security model](docs/security.md), [integrations guide](docs/integrations.md), and [documentation site](https://apimgr-quotes.readthedocs.io/) for security reporting, service integrations, and additional guides. Third-party content is included only when its source and redistribution rights are documented.
 
 ## Development
 
