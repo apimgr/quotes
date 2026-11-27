@@ -119,9 +119,9 @@ Project-defined quote routes are public and read-only. Template-defined pages an
 | GET | `/api/v1/server/preferences/sync/import` | None | Apply validated shared preference values. |
 | GET | `/api/v1/server/help/mcp` | None | MCP connection information. |
 | POST | `/api/v1/server/preferences/tokens/primary` | None unless a valid owner token is already supplied | Issue a primary owner token; rejects callers already presenting a valid owner credential. |
-| GET, POST | `/api/v1/server/preferences/tokens` | Primary owner token | List token metadata including scope, or create a linked token with `name`, optional `scope` (`read` or `read-write`, default `read-write`), and optional expiry. |
+| GET, POST | `/api/v1/server/preferences/tokens` | Primary owner token | List token metadata as `primary`, `linked`, and `max_linked`, or create a linked token with `name`, optional `scope` (`read` or `read-write`, default `read-write`), and optional `expires` or `expires_on`. |
 | POST | `/api/v1/server/preferences/tokens/{id}/{reveal,rotate}` | Primary owner token | Reveal or rotate a linked token; scope remains unchanged on rotation. |
-| PATCH, DELETE | `/api/v1/server/preferences/tokens/{id}` | Primary owner token | Rename/change expiry or revoke a linked token. Scope changes require revoke and recreation. |
+| PATCH, DELETE | `/api/v1/server/preferences/tokens/{id}` | Primary owner token | Rename/change expiry or revoke a linked token by its public UUIDv7 ID. Scope changes require revoke and recreation. |
 | POST | `/api/v1/server/preferences/tokens/primary/{reveal,rotate}` | Primary owner token | Reveal or rotate the primary token. |
 | DELETE | `/api/v1/server/preferences/tokens/primary` | Primary owner token | Revoke the primary token and delete the anonymous owner and its data. |
 | POST | `/api/v1/server/mcp`, `/api/mcp`, `/mcp` | Linked credential | Streamable HTTP access to quote tools. |

@@ -30,9 +30,13 @@ Quote reads are public and read-only. MCP and owner-token management require the
 | POST | `/api/v1/server/preferences/tokens/primary` | Issue a primary owner token |
 | POST | `/api/v1/server/preferences/tokens/primary/{reveal,rotate}` | Reveal or rotate the primary token |
 | DELETE | `/api/v1/server/preferences/tokens/primary` | Revoke the primary token and its owner |
-| POST | `/api/v1/server/preferences/tokens` | Create a linked token (`name`, optional `scope` of `read` or `read-write`, optional `expiry`; scope defaults to `read-write`) |
+| POST | `/api/v1/server/preferences/tokens` | Create a linked token (`name`, optional `scope` of `read` or `read-write`, and optional `expires` or `expires_on`; scope defaults to `read-write`) |
 | POST | `/api/v1/server/preferences/tokens/{id}/{reveal,rotate}` | Reveal or rotate a linked token |
-| PATCH, DELETE | `/api/v1/server/preferences/tokens/{id}` | Update or revoke a linked token |
+| PATCH, DELETE | `/api/v1/server/preferences/tokens/{id}` | Update or revoke a linked token; `{id}` is the public UUIDv7 token ID |
+
+Linked-token list responses use `data.primary`, `data.linked`, and `data.max_linked`. Each token object has `id`, `name`, `kind`, `scope`, `token_masked`, `created_at`, `last_used_at`, `expires_at`, and `status`. Create, reveal, and rotate add `linked_token` to the token object; this is the only linked-token response that contains the raw credential. Revoke returns `{ "id": "<uuid>", "status": "revoked" }`. The API never accepts or exposes legacy integer database keys.
+
+For create and update, `expires` accepts `never`, `7d`, `30d`, `90d`, or `1y`. Alternatively, `expires_on` accepts a `YYYY-MM-DD` UTC date; the token remains valid for that whole day and expires at midnight UTC the following day. A past date or sending both fields is rejected.
 | GET | `/api/v1/server/preferences` | Read the browser's theme and language preferences |
 | POST | `/api/v1/server/preferences` | Apply valid theme or language preferences only after this device accepts preference cookies; otherwise return `consent_required` and list the values as ignored |
 | GET | `/api/v1/server/preferences/sync` | Export preferences as a URL and base64url code |
