@@ -16,6 +16,12 @@ Start with `/.well-known/security.txt` served by the Quotes instance. Its `Conta
 
 The human-readable [security page](/server/security) explains the reporting channels and links to the coordinated disclosure [policy](/server/security/policy). The report form also appears at [`/server/contact`](</server/contact>) when enabled. It validates and rate-limits reports, encrypts stored submissions, and does not add content to the quote collections. Do not include a secret or credential in a public issue.
 
+### Report review and status
+
+Submitting a report stores its encrypted content in the application database and returns a tracking ID. When SMTP delivery is available, the acknowledgment email includes a private status link; otherwise the tracking ID is returned by the form without an email. The status link shows the report's state, maintainer comments, and expected disclosure date. Its token can be used once per UTC day and the link expires 30 days after the report is closed. States are Received, Triaged, Confirmed, Patching, Disclosed, and Won't Fix.
+
+There is no web administration page for report contents or status changes. Maintainers use the server's `--maintenance security list`, `show`, `export`, and `update` commands, authorized with the operator token or root. The `show` command does not reveal the report body; maintainers read it from the encrypted notification or encrypted export. SMTP status notices contain no vulnerability details.
+
 ## Well-known endpoints
 
 Quotes implements these root discovery paths:

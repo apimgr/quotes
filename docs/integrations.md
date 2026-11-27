@@ -22,4 +22,6 @@ Metrics are internal endpoints and require independent bearer credentials stored
 
 ## Overlay networks
 
-Tor onion service and I2P eepsite support follow the project's overlay configuration. I2P is opt-in on host installs and defaults on in a container. Each overlay endpoint uses its dedicated listener and publishes its resolved URL through the supported server information surfaces when enabled.
+Quotes can serve its HTTP interface as a Tor v3 onion service and as an I2P eepsite. Tor starts automatically when the `tor` executable is available; there is no enable/disable switch. I2P is disabled by default on bare-metal, VM, and system-container installs, and enabled by default in an application container. On Linux, the application container includes `i2pd`; otherwise I2P uses the configured external SAM endpoint (default `127.0.0.1:7656`). If no provider is available, that overlay remains unavailable.
+
+Each active overlay uses a dedicated loopback backend listener, separate from the clearnet listener. Both overlays serve plain HTTP only: their onion or eepsite address is the endpoint identity, and Quotes does not add HTTPS, HSTS, or an HTTP-to-HTTPS redirect there. Tor and I2P addresses are private by default and are omitted from autodiscovery. Set the relevant `server.tor.expose` or `server.i2p.expose` option to publish an address in the supported discovery and server-information responses. See [configuration](configuration.md) for the full overlay settings and defaults.

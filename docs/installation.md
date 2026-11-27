@@ -14,7 +14,9 @@ docker compose -f docker/docker-compose.yml up -d
 
 The server listens on port 80 inside the container. Persist `/config` to keep
 the generated `server.yml` and `secrets.yml`. The image includes the embedded
-quote collections; no external quote dataset download is required.
+quote collections and the Tor and I2P provider executables; no external quote
+dataset download is required. I2P is enabled by default in the application
+container, while Tor starts automatically when its executable is present.
 
 ## Binary downloads
 
@@ -134,3 +136,19 @@ See the [CLI reference](cli.md) for commands, configuration, and token use.
 
 Development and release builds use the Docker-backed Makefile. See
 [development](development.md) for supported targets and validation commands.
+
+## Overlay network setup
+
+Tor support starts automatically when a `tor` executable is installed and
+available to the server process. Host installations therefore need Tor
+installed and discoverable on `PATH` (or its path configured in `server.tor`).
+I2P is off by default on bare-metal and VM installs; enable it with
+`server.i2p.enabled`, `I2P_ENABLED`, or the `--i2p` startup flag. I2P needs a
+managed `i2pd` provider or an external SAM service, whose default address is
+`127.0.0.1:7656`. The Docker image includes `i2pd` and enables I2P by default.
+
+Both overlays serve HTTP only and use their own listener. Their resolved
+addresses are not published in autodiscovery unless the matching
+`server.tor.expose` or `server.i2p.expose` setting is enabled. See
+[integrations](integrations.md#overlay-networks) and
+[configuration](configuration.md) for details.

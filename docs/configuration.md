@@ -115,6 +115,17 @@ Debug endpoints exist only when `--debug` or a truthy `DEBUG` value enables them
 
 The following examples show the area-file shape; omit settings that should use their defaults. The complete key, type, and built-in default index follows the examples.
 
+### Languages
+
+`server.i18n` is stored in `yaml.d/web.yml`. `default_language` selects the server's language when a request has no supported `?lang=`, language cookie, or `Accept-Language` preference. `available_languages` is the allowlist used for request negotiation and the language selector; it must include the six bundled languages. Unsupported languages and missing translation keys fall back to English.
+
+```yaml
+server:
+  i18n:
+    default_language: en
+    available_languages: [en, es, fr, ar, de, it]
+```
+
 ### Logging
 
 Log files are created in the selected log directory. The configurable file kinds are `access.log`, `server.log`, `error.log`, `audit.log`, `security.log`, and `debug.log`; the logging subsystem also writes `app.log` and `auth.log` using their built-in formats. Audit records use JSON Lines and a hash chain. Files use mode `0640`, and rotated files follow each kind's retention setting.
@@ -336,6 +347,8 @@ This index covers every configuration key, its YAML value type, and its built-in
 | `server.contact.dpo.email` | `string` | `empty` |
 | `server.contact.dpo.name` | `string` | `empty` |
 | `server.contact.dpo.webhooks` | `map[string]string` | `empty` |
+| `server.i18n.default_language` | `string` | `en` |
+| `server.i18n.available_languages` | `[]string` | `6 item(s)` |
 | `server.healthz.root.enabled` | `bool` | `false` |
 | `server.geoip.enabled` | `bool` | `true` |
 | `server.geoip.deny_countries` | `[]string` | `empty` |

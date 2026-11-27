@@ -36,10 +36,6 @@ Quote reads are public and read-only. MCP and owner-token management require the
 | POST | `/api/v1/server/preferences/tokens` | Create a linked token (`name`, optional `scope` of `read` or `read-write`, and optional `expires` or `expires_on`; scope defaults to `read-write`) |
 | POST | `/api/v1/server/preferences/tokens/{id}/{reveal,rotate}` | Reveal or rotate a linked token |
 | PATCH, DELETE | `/api/v1/server/preferences/tokens/{id}` | Update or revoke a linked token; `{id}` is the public UUIDv7 token ID |
-
-Linked-token list responses use `data.primary`, `data.linked`, and `data.max_linked`. Each token object has `id`, `name`, `kind`, `scope`, `token_masked`, `created_at`, `last_used_at`, `expires_at`, and `status`. Create, reveal, and rotate add `linked_token` to the token object; this is the only linked-token response that contains the raw credential. Revoke returns `{ "id": "<uuid>", "status": "revoked" }`. The API never accepts or exposes legacy integer database keys.
-
-For create and update, `expires` accepts `never`, `7d`, `30d`, `90d`, or `1y`. Alternatively, `expires_on` accepts a `YYYY-MM-DD` UTC date; the token remains valid for that whole day and expires at midnight UTC the following day. A past date or sending both fields is rejected.
 | GET | `/api/v1/server/preferences` | Read the browser's theme and language preferences |
 | POST | `/api/v1/server/preferences` | Apply valid theme or language preferences only after this device accepts preference cookies; otherwise return `consent_required` and list the values as ignored |
 | GET | `/api/v1/server/preferences/sync` | Export preferences as a URL and base64url code |
@@ -48,11 +44,14 @@ For create and update, `expires` accepts `never`, `7d`, `30d`, `90d`, or `1y`. A
 | POST | `/api/mcp`, `/mcp` | Direct MCP aliases |
 | GET | `/api/v1/server/swagger` | OpenAPI document |
 | GET | `/api/swagger` | OpenAPI compatibility alias |
-| GET | `/api/v1/server/graphql` | GraphQL endpoint description and query example |
 | GET, POST | `/api/v1/server/graphql` | Read-only GraphQL query endpoint; GET accepts `query`, optional `variables`, and `operationName` |
 | GET, POST | `/api/graphql` | GraphQL compatibility alias for the current version |
 | GET | `/api/healthz` | Health compatibility route |
 | GET | `/api/v1/server/security/report/{tracking_id}?token=...` | Read an authorized security-report status; responses are not cacheable |
+
+Linked-token list responses use `data.primary`, `data.linked`, and `data.max_linked`. Each token object has `id`, `name`, `kind`, `scope`, `token_masked`, `created_at`, `last_used_at`, `expires_at`, and `status`. Create, reveal, and rotate add `linked_token` to the token object; this is the only linked-token response that contains the raw credential. Revoke returns `{ "id": "<uuid>", "status": "revoked" }`. The API never accepts or exposes legacy integer database keys.
+
+For create and update, `expires` accepts `never`, `7d`, `30d`, `90d`, or `1y`. Alternatively, `expires_on` accepts a `YYYY-MM-DD` UTC date; the token remains valid for that whole day and expires at midnight UTC the following day. A past date or sending both fields is rejected.
 
 Lists default to 250 items and allow up to 1000. Invalid categories, IDs, and pagination values return an error. The server applies configured per-client rate limits and request-size limits. API routes return JSON to browser and API clients; `Accept: text/plain` requests readable text output across JSON endpoints. The health API also has an explicit `.txt` endpoint.
 
