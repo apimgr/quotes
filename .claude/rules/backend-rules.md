@@ -9,6 +9,7 @@
 
 ## CRITICAL - ALWAYS DO
 - Bound requests, apply configured per-client rate limits, and use canonical errors.
+- Store owner-token scopes and apply the primary/global and linked read/read-write boundaries from AI.md PART 11.
 - Use parameterized database operations, connection pooling, and timeouts.
 - Implement security logging, token checks, and overlay-network rules as prescribed.
 

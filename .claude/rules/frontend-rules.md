@@ -9,6 +9,7 @@
 
 ## CRITICAL - ALWAYS DO
 - Use server-rendered, mobile-friendly, accessible pages with shared shell and components.
+- Load `/static/css/common.css`, then `components.css`, then `public.css`; keep project JavaScript in `/static/js/app.js` (documentation-tool startup scripts are the specified exception).
 - Keep theme selection, pagination, and filtering usable without JavaScript.
 - Register pages centrally and make every error page conform to the shell.
 

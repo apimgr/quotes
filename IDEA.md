@@ -59,10 +59,11 @@ There are no user accounts. Public browsing, REST, and GraphQL require no authen
 | `quote` | string — quote text | Public |
 | `author` | string — attributed author or character name | Public |
 | `category` | string — category (anime, chucknorris, dadjokes, programming, quotes) | Public |
+| `source` | string — embedded provenance key (`original`); not returned by the API | Internal |
 
 Quote records contain no PII. The template-required contact reporting flow handles reporter-submitted PII under its configured retention and delivery rules. Browser preference cookies contain no PII.
 
-The five embedded collections contain original project content created at the project owner's direction. No third-party quote corpus is imported. Each collection currently ships 30 records; future collection updates must preserve the same original-content and attribution boundary.
+The owner, apimgr, declares the five embedded collections theirs. AI writes original content at the owner's direction, and the owner releases it under the project's MIT license. No third-party quote corpus is imported. Each collection currently ships 30 records; every embedded record has `source: "original"`. Future collection updates must preserve the same ownership and attribution boundary.
 
 ### Trust boundaries & external services
 
@@ -117,6 +118,12 @@ Project-defined quote routes are public and read-only. Template-defined pages an
 | GET, POST | `/api/v1/server/preferences/sync` | None | Export/import browser preferences. |
 | GET | `/api/v1/server/preferences/sync/import` | None | Apply validated shared preference values. |
 | GET | `/api/v1/server/help/mcp` | None | MCP connection information. |
+| POST | `/api/v1/server/preferences/tokens/primary` | None unless a valid owner token is already supplied | Issue a primary owner token; rejects callers already presenting a valid owner credential. |
+| GET, POST | `/api/v1/server/preferences/tokens` | Primary owner token | List token metadata including scope, or create a linked token with `name`, optional `scope` (`read` or `read-write`, default `read-write`), and optional expiry. |
+| POST | `/api/v1/server/preferences/tokens/{id}/{reveal,rotate}` | Primary owner token | Reveal or rotate a linked token; scope remains unchanged on rotation. |
+| PATCH, DELETE | `/api/v1/server/preferences/tokens/{id}` | Primary owner token | Rename/change expiry or revoke a linked token. Scope changes require revoke and recreation. |
+| POST | `/api/v1/server/preferences/tokens/primary/{reveal,rotate}` | Primary owner token | Reveal or rotate the primary token. |
+| DELETE | `/api/v1/server/preferences/tokens/primary` | Primary owner token | Revoke the primary token and delete the anonymous owner and its data. |
 | POST | `/api/v1/server/mcp`, `/api/mcp`, `/mcp` | Linked credential | Streamable HTTP access to quote tools. |
 | GET | `/api/v1/server/dpo` | None | Data-protection contact details. |
 | GET | `/api/v1/server/security` | None | Security reporting channels. |

@@ -24,5 +24,6 @@
 
 ## QUICK REFERENCE
 - Keep OpenAPI, GraphQL, response envelopes, content negotiation, and docs aligned with registered handlers.
+- Owner token JSON includes scope: primary tokens are `global`; linked tokens are `read` or `read-write` (default `read-write`). Token management remains primary-only.
 
 For complete details, see AI.md PART 13, 14, 15

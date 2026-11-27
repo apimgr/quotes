@@ -30,7 +30,7 @@ Quote reads are public and read-only. MCP and owner-token management require the
 | POST | `/api/v1/server/preferences/tokens/primary` | Issue a primary owner token |
 | POST | `/api/v1/server/preferences/tokens/primary/{reveal,rotate}` | Reveal or rotate the primary token |
 | DELETE | `/api/v1/server/preferences/tokens/primary` | Revoke the primary token and its owner |
-| POST | `/api/v1/server/preferences/tokens` | Create a linked token |
+| POST | `/api/v1/server/preferences/tokens` | Create a linked token (`name`, optional `scope` of `read` or `read-write`, optional `expiry`; scope defaults to `read-write`) |
 | POST | `/api/v1/server/preferences/tokens/{id}/{reveal,rotate}` | Reveal or rotate a linked token |
 | PATCH, DELETE | `/api/v1/server/preferences/tokens/{id}` | Update or revoke a linked token |
 | GET | `/api/v1/server/preferences` | Read the browser's theme and language preferences |
@@ -63,7 +63,7 @@ curl -q -LSsf 'http://localhost:8080/api/v1/quotes?author=Quotes%20Project&page=
 curl -q -LSsf http://localhost:8080/api/v1/server/swagger
 ```
 
-GraphQL supports `quote(id)`, `randomQuote(category)`, `quotes(category, author, page, limit)`, and `categories`. POST accepts JSON with a `query` field; GET accepts the query and optional `variables` and `operationName` parameters. MCP uses JSON-RPC over POST and requires an owner or linked Bearer token. Create a separate linked token for each MCP client; the operator token is not accepted for MCP. Its tools are `quotes_list`, `quotes_random`, `quote_get`, and `categories_list`; use `tools/list` before `tools/call`.
+GraphQL supports `quote(id)`, `randomQuote(category)`, `quotes(category, author, page, limit)`, and `categories`. POST accepts JSON with a `query` field; GET accepts the query and optional `variables` and `operationName` parameters. MCP uses JSON-RPC over POST and requires an owner or linked Bearer token. Create a separate linked token for each MCP client; the operator token is not accepted for MCP. Linked tokens carry `read` or `read-write` scope (default `read-write`), while primary tokens are `global`; token lists include scope, and changing a linked token's scope requires revoking and recreating it. Its tools are `quotes_list`, `quotes_random`, `quote_get`, and `categories_list`; use `tools/list` before `tools/call`.
 
 ## Browser pages
 

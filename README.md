@@ -95,7 +95,7 @@ The client supports random quotes, category listing, quote lookup, and filtered/
 - Discover RSS, Atom, JSON Feed, sitemap, robots, and `llms.txt` resources.
 - Run optional Tor and I2P overlay services.
 
-REST uses `/api/v1/`; GraphQL is at `/api/v1/server/graphql`; OpenAPI JSON is at `/api/v1/server/swagger`. Browser API references are at `/server/docs/swagger` and `/server/docs/graphql`. MCP is at `/api/v1/server/mcp` and requires an owner-linked bearer token. Token management is available at `/server/preferences/tokens`.
+REST uses `/api/v1/`; GraphQL is at `/api/v1/server/graphql`; OpenAPI JSON is at `/api/v1/server/swagger`. Browser API references are at `/server/docs/swagger` and `/server/docs/graphql`. MCP is at `/api/v1/server/mcp` and requires an owner-linked bearer token. Linked tokens have `read` or `read-write` scope; token management is available at `/server/preferences/tokens`.
 
 See the [API reference](docs/api.md), [configuration guide](docs/configuration.md), [security model](docs/security.md), and [integrations guide](docs/integrations.md).
 

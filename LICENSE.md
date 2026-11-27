@@ -77,6 +77,8 @@ This software includes the following third-party libraries and web assets:
 | sapics/ip-location-db (`iptoasn-asn`, `iptoasn-country`) | current embedded snapshot | PDDL | iptoasn.com contributors |
 | DB-IP City (`dbip-city`) | current embedded snapshot | CC BY 4.0 | DB-IP.com |
 
+Original content, owned by apimgr, written with AI assistance at the owner's direction, released under the project's MIT license. This includes the five embedded quote and joke collections; each record's provenance key is `original`.
+
 BSD-3-Clause: neither the names of the copyright holders nor the names of their contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
 Apache-2.0 license terms and any applicable NOTICE files are retained with the upstream source and bundled Swagger UI assets. Full license texts for standard SPDX licenses are available at <https://spdx.org/licenses/>.

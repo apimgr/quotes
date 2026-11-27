@@ -1,6 +1,6 @@
 # Integrations
 
-Quotes exposes public REST and GraphQL interfaces, OpenAPI documentation, plain-text quote responses, and a Streamable HTTP MCP endpoint. REST and GraphQL quote reads need no credentials. MCP requests require an owner-linked Bearer token. Issue a primary owner token at `/server/preferences/tokens`, then create a separate linked token for each MCP client; do not use the operator token.
+Quotes exposes public REST and GraphQL interfaces, OpenAPI documentation, plain-text quote responses, and a Streamable HTTP MCP endpoint. REST and GraphQL quote reads need no credentials. MCP requests require an owner-linked Bearer token. Issue a primary owner token at `/server/preferences/tokens`, then create a separate linked token for each MCP client; choose `read` or `read-write` scope (MCP tools only read quotes), and do not use the operator token.
 
 A web app manifest and service worker provide install metadata and basic offline caching. Security contact information is published at `/.well-known/security.txt`; AI clients can discover the public API at `/.well-known/llms.txt` and `/llms.txt`. These discovery documents use the request's resolved public origin and do not advertise internal metrics. The project does not currently enable OAuth/OIDC, webhooks, federation, native app associations, or external runtime data APIs. There is no configured official server URL; clients select the server they use.
 
