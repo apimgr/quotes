@@ -103,14 +103,12 @@ Project-defined quote routes are public and read-only. Template-defined pages an
 |---|---|---|---|
 | GET | `/api/v1` | None | API identity, version, and category counts. |
 | GET | `/api/autodiscover` | None or bearer | Unversioned discovery envelope with server/API versions, public origins, exposed overlay addresses, and integrity-verified CLI release metadata. |
-| GET | `/cli/binaries/quotes-cli-{os}-{arch}[.exe]` | None, or bearer when configured | Streams the matching operator-provisioned, SHA-256-verified CLI release binary. |
+| GET | `/cli/binaries/{filename}` | None, or bearer when configured | Streams a matching operator-provisioned, SHA-256-verified CLI release binary. |
 | GET | `/api/v1/categories` | None | Category names and counts. |
 | GET | `/api/v1/quotes` | None | Paginated quotes; optional category, author, page, and limit. |
 | GET | `/api/v1/categories/{category}/quotes` | None | Paginated quotes within a category. |
 | GET | `/api/v1/quotes/random` | None | One random quote, optionally filtered by category. |
 | GET | `/api/v1/quotes/{id}` | None | One quote by global ID. |
-| GET | `/api/v1/quotes.txt` | None | Plain-text quote list. |
-| GET | `/api/v1/quotes/random.txt` | None | Plain-text random quote. |
 | GET | `/api/v1/server/{about,help,privacy,terms}` | None | Machine-readable page content. |
 | GET | `/api/v1/server/healthz` | None | Health status. |
 | GET | `/api/v1/server/auth/check` | Bearer token | Machine-only validation; returns `data.kind` as `operator` or `owner` without echoing or recording use of the token. |

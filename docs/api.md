@@ -47,7 +47,6 @@ Quote reads are public and read-only. MCP and owner-token management require the
 | GET, POST | `/api/v1/server/graphql` | Read-only GraphQL query endpoint; GET accepts `query`, optional `variables`, and `operationName` |
 | GET, POST | `/api/graphql` | GraphQL compatibility alias for the current version |
 | GET | `/api/healthz` | Health compatibility route |
-| GET | `/api/v1/server/security/report/{tracking_id}?token=...` | Read an authorized security-report status; responses are not cacheable |
 
 Linked-token list responses use `data.primary`, `data.linked`, and `data.max_linked`. Each token object has `id`, `name`, `kind`, `scope`, `token_masked`, `created_at`, `last_used_at`, `expires_at`, and `status`. Create, reveal, and rotate add `linked_token` to the token object; this is the only linked-token response that contains the raw credential. Revoke returns `{ "id": "<uuid>", "status": "revoked" }`. The API never accepts or exposes legacy integer database keys.
 

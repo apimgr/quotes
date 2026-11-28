@@ -6,7 +6,7 @@ A web app manifest and service worker provide install metadata and basic offline
 
 CLI setup may validate a supplied Bearer token with the machine-only `GET /api/v1/server/auth/check` endpoint. A valid response returns `data.kind` (`operator` or `owner`); an invalid token returns 401. The endpoint does not echo the credential.
 
-Operators provision CLI releases in `{data_dir}/cli/` (or `cli.binary_download.dir`) using the release binaries, `version.txt`, and `sha256.txt`. The server recomputes each checksum and advertises only matching files. `GET /cli/binaries/{filename}` streams an advertised binary; downloads are public by default and can require a Bearer token with `cli.binary_download.require_auth: true`. See the [API reference](api.md) and [CLI reference](cli.md) for response and update behavior. The discovery documents use the request's resolved public origin and do not advertise internal metrics. The project does not currently enable OAuth/OIDC, webhooks, federation, native app associations, or external runtime data APIs. There is no configured official server URL; clients select the server they use.
+Operators provision CLI releases in `{data_dir}/cli/` (or `cli.binary_download.dir`) using the release binaries, `version.txt`, and `sha256.txt`. The server recomputes each checksum and advertises only matching files. `GET /cli/binaries/{filename}` streams an advertised binary; downloads are public by default and can require a Bearer token with `cli.binary_download.require_auth: true`. See the [API reference](api.md) and [CLI reference](cli.md) for response and update behavior. The discovery documents use the request's resolved public origin and do not advertise internal metrics. Quotes has no general-purpose webhook API, OAuth/OIDC, federation, native app associations, or external runtime data API. Contact and report notifications do support operator-configured outbound webhook transports, described below. There is no configured official server URL; clients select the server they use.
 
 Search engines can use the dynamically generated `/robots.txt` and `/sitemap.xml`. The sitemap includes public HTML pages and quote detail pages allowed by the robots configuration; it excludes API paths, contact forms, and private token pages. The canonical security contact file is `/.well-known/security.txt`; a generated PGP public key is served at `/.well-known/pgp-key.asc` only when a keypair exists and `web.security.publish_pgp_key` is enabled. `/security.txt` is not an alias.
 
@@ -15,6 +15,12 @@ Feed readers can subscribe to `/feed.xml` (Atom 1.0) or `/rss.xml` (RSS 2.0). Bo
 ## SMTP notifications
 
 When a working SMTP relay is available, the server enables the notification queue and report delivery. `server.notifications.email.smtp.host` may be left empty for local relay detection; configured relays are tested at startup. `tls: auto` uses implicit TLS on port 465 and negotiates STARTTLS after EHLO on other ports. Authentication credentials are sent only after TLS. Without working SMTP, email-dependent features are disabled. Templates ship in the binary and operator overrides are loaded from `{config_dir}/template/email/`.
+
+## Contact notification webhooks
+
+Operators can configure outbound notification transports for the `admin`, `security`, `abuse`, `general`, and `dpo` roles with the corresponding `server.contact.<role>.webhooks` settings in configuration files. These are server-to-operator notification deliveries, not a public webhook API. Every delivery includes `X-Webhook-Signature` (HMAC-SHA256 over the exact request body), `X-Webhook-Timestamp`, `X-Webhook-ID`, and `X-Webhook-Event`. The generated per-transport signing secret is stored in `secrets.yml` under `server.contact.<role>.webhooks.<transport>_secret`; configure the receiving service to verify the signature and reject stale timestamps. Failed deliveries retry with backoff, reusing the webhook ID so receivers can deduplicate.
+
+Webhook payloads contain summaries only, including for security reports: they never include a report body or reporter contact details. Full security-report content is sent by email only to the configured security recipient. See the [configuration reference](configuration.md#complete-settings-index) for role settings and defaults.
 
 ## Internal metrics
 
